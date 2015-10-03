@@ -5,18 +5,13 @@ var adminApp = express();
 
 var clientServer = http.createServer(clientApp);
 var ioClient = require('socket.io').listen(clientServer); 
-
+var socketInstructions = require('./sockets');
 
 clientApp.use( express.static(__dirname + '/../client/clientApp') );
 clientServer.listen( process.env.PORT || 8080 );
 
+ioClient.on('connection', socketInstructions.connection);
 
-ioClient.on('connection', function(socket){
-  console.log('a user connected');
-  socket.on('disconnect', function(){
-    console.log('user disconnected');
-  });
-});
 //It seems odd to me that we have our admin pages available from the internet. 
 //The admin app will be available on a different port.
 adminApp.use( express.static(__dirname + '/../client/adminApp/') );
