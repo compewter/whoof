@@ -1,12 +1,14 @@
 angular.module('adminConsole', [
+  'adminConsole.users',
+  'adminConsole.services',
   'ngRoute'
 ])
 .config(function ($routeProvider) {
   $routeProvider
     .when('/', {
-      templateUrl: 'adminApp/',
+      templateUrl: 'views/users.html',
     })
     .otherwise('/',{
-      templateUrl: 'adminApp/',
+      templateUrl: 'views/users.html',
     });
 });

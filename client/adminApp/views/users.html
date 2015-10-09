@@ -1,0 +1,12 @@
+<div ng-controller="UserController" id='container'>
+  <input type='text' placeholder="Search" ng-model='searchText'>
+  <table>
+    <tr>
+      <th>ID</th> <th>IP</th>
+    </tr>
+    <tr ng-repeat="user in users | orderBy:'id' | filter:searchText" class='user'>
+      <td class='id'>{{user.id}}</td>
+      <td class='ip'>{{user.ip}}</td>
+    </tr>
+  </table>
+</div>
