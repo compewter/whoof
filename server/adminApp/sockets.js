@@ -9,6 +9,7 @@ module.exports.listen = function(app){
     module.exports.emit = function(eventName, data){
       socket.emit(eventName, data);
     };
+    
     socket.on('disconnect', function(){
       console.log('admin disconnected');
     });

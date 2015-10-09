@@ -7,11 +7,9 @@ var adminApp = express();
 
 var clientServer = http.createServer(clientApp);
 var ioClient = require('./clientApp/sockets').listen(clientServer);
-// var ioClientInstructions = require('./clientApp/sockets');
 
 clientApp.use( express.static(__dirname + '/../client/clientApp') );
 clientServer.listen( process.env.PORT || 8080 );
-// ioClient.on('connection', ioClientInstructions.connection);
 
 
 //It seems odd to me that we generally have our admin pages available from the internet. 

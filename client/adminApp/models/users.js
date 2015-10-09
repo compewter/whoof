@@ -15,8 +15,4 @@ angular.module('adminConsole.users', [])
     })
   });
 
-  // Users.fetch().success(function(users){
-  //   $scope.users = users;
-  // });
-
 }]);
