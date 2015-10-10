@@ -2,16 +2,22 @@ angular.module('adminConsole.users', [])
 
 .controller('UserController', ['$scope', 'SocketFactory', function ($scope, SocketFactory) {
 
-  $scope.users = [
-    {
-      id: 0,
-      ip: '127.0.0.1'
-    }
-  ];
+  $scope.users = [];
 
-  SocketFactory.socket.on('newUser', function(data){
+  SocketFactory.socket.on('newUser', function(user){
     $scope.$apply(function(){
-      $scope.users.push(data);
+      $scope.users.push(user);
+    })
+  });
+
+  SocketFactory.socket.on('userLeft', function(user){
+    //remove user that left from $scope.users
+    $scope.$apply(function(){
+      for(var i = 0; i < $scope.users.length; i++){
+        if($scope.users[i].id === user.id){
+          $scope.users.splice(i,1);
+        }
+      }
     })
   });
 

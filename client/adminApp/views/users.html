@@ -2,11 +2,13 @@
   <input type='text' placeholder="Search" ng-model='searchText'>
   <table>
     <tr>
-      <th>ID</th> <th>IP</th>
+      <th>ID</th> <th>IP</th> <th>OS</th> <th>Time Connected</th>
     </tr>
     <tr ng-repeat="user in users | orderBy:'id' | filter:searchText" class='user'>
       <td class='id'>{{user.id}}</td>
       <td class='ip'>{{user.ip}}</td>
+      <td class='ip'>{{user.agent}}</td>
+      <td class='ip'>{{user.connectedAt}}</td>
     </tr>
   </table>
 </div>

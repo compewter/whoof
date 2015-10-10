@@ -13,7 +13,7 @@ clientServer.listen( process.env.PORT || 8080 );
 
 
 //It seems odd to me that we generally have our admin pages available from the internet. 
-//The admin app will be available on a different port.
+//Thus, the admin app will be available on a different port.
 var adminServer = http.createServer(adminApp);
 var ioAdmin = require('./adminApp/sockets').listen(adminServer);
 
