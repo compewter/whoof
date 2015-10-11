@@ -18,6 +18,7 @@ var adminServer = http.createServer(adminApp);
 var ioAdmin = require('./adminApp/sockets').listen(adminServer);
 
 adminApp.use( express.static(__dirname + '/../client/adminApp/') );
+adminApp.use( express.static(__dirname + '/../bower_components/') );
 adminServer.listen( 1337 );
 
 

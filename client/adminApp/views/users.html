@@ -9,7 +9,7 @@
       <td class='id'>{{user.id}}</td>
       <td class='ip'>{{user.ip}}</td>
       <td class='ip'>{{user.agent}}</td>
-      <td class='ip'>{{user.connectedAt | timeAgo}}</td>
+      <td class='ip' am-time-ago="user.connectedAt"></td>
     </tr>
   </table>
 </div>
