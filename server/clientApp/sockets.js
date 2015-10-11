@@ -13,17 +13,21 @@ module.exports.listen = function(app){
   io.on('connection', function(socket){
     
     console.log('a user connected');
-    
+
     //store the id number of the socket on it in a new property
     socket._id = id++;
+
+    socket.join('clients');
     
+    //on new user connection, send info to admin
     var newUser = buildNewUser(socket);
     adminSocket.emit('newUser', newUser);
 
+    sockets.push(newUser);
+
+    //when user disconnects, let admin know
     socket.on('disconnect', function(){
-      adminSocket.emit('userLeft', {
-        id: socket._id
-      });
+      disconnect(socket);
     });
 
   });
@@ -43,4 +47,26 @@ var buildNewUser = function(socket){
     agent: clientAgent.slice(clientAgent.indexOf('(') + 1,clientAgent.indexOf(')')),
     connectedAt: socket.handshake.time
   };
+};
+
+var disconnect = function(socket){
+  adminSocket.emit('userLeft', {
+    id: socket._id
+  });
+
+  //remove socket from active sockets array
+  for(var i = 0; i < sockets.length; i++){
+    if(sockets[i].id === socket._id){
+      sockets.splice(i,1);
+    }
+  };
+};
+
+module.exports.sockets = sockets;
+
+//exporting this so that it can be called from adminApp/sockets
+module.exports.sendUsers = function(users){
+  users.forEach(function(user){
+    adminSocket.emit('newUser', user);
+  });
 };

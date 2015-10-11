@@ -4,6 +4,9 @@ angular.module('adminConsole.users', [])
 
   $scope.users = [];
 
+  //request all users when controller loads
+  SocketFactory.socket.emit('getUsers',{});
+
   SocketFactory.socket.on('newUser', function(user){
     $scope.$apply(function(){
       $scope.users.push(user);
