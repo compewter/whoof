@@ -45,7 +45,7 @@ var buildNewUser = function(socket){
     //address is in the form ::ffff:000.000.000.000
     ip: clientIp.slice(clientIp.lastIndexOf(':') + 1),
     agent: clientAgent.slice(clientAgent.indexOf('(') + 1,clientAgent.indexOf(')')),
-    connectedAt: socket.handshake.time
+    connectedAt: new Date(socket.handshake.time)
   };
 };
 

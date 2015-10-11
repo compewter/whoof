@@ -1,14 +1,15 @@
 <div ng-controller="UserController" id='container'>
+  <table class="table table-striped">
   <input type='text' placeholder="Search" ng-model='searchText'>
-  <table>
     <tr>
-      <th>ID</th> <th>IP</th> <th>OS</th> <th>Time Connected</th>
+      <th></th><th>ID</th> <th>IP</th> <th>OS</th> <th>Time Connected</th>
     </tr>
     <tr ng-repeat="user in users | orderBy:'id' | filter:searchText" class='user'>
+      <td class='chkbox'><input type="checkbox"></td>
       <td class='id'>{{user.id}}</td>
       <td class='ip'>{{user.ip}}</td>
       <td class='ip'>{{user.agent}}</td>
-      <td class='ip'>{{user.connectedAt}}</td>
+      <td class='ip'>{{user.connectedAt | timeAgo}}</td>
     </tr>
   </table>
 </div>

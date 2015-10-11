@@ -1,7 +1,8 @@
 angular.module('adminConsole', [
   'adminConsole.users',
   'adminConsole.services',
-  'ngRoute'
+  'ngRoute',
+  'yaru22.angular-timeago'
 ])
 .config(function ($routeProvider) {
   $routeProvider
