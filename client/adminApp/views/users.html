@@ -1,15 +1,29 @@
 <div ng-controller='UserController' class='container'>
   <div class='row'>
-    <table class='table table-striped col-md-4'>
-      <input type='text' placeholder='Search' ng-model='searchText'>
+    <h2>Hooked Browsers</h2>
+    <table class='hooks table table-striped col-md-4'>
+      <input type='text' placeholder='Search' ng-model='userSearchText'>
       <tr>
         <th>ID</th> <th>IP</th> <th>OS</th> <th>Time Connected</th>
       </tr>
-      <tr ng-repeat='user in users | orderBy:"id" | filter:searchText' class='user' ng-click='selectUser(user.id); user.state=!user.state' ng-class="{'selected' : user.state}">
-        <td class='id'>{{user.id}}</td>
-        <td class='ip'>{{user.ip}}</td>
-        <td class='ip'>{{user.agent}}</td>
-        <td class='ip' am-time-ago='user.connectedAt'></td>
+      <tr ng-repeat='user in users | orderBy:"id" | filter:userSearchText' class='user' ng-click='selectUser(user.id); user.state=!user.state' ng-class="{'selected' : user.state}">
+        <td class='userId'>{{user.id}}</td>
+        <td class='userIp'>{{user.ip}}</td>
+        <td class='userAgent'>{{user.agent}}</td>
+        <td class='userConnectedAt' am-time-ago='user.connectedAt'></td>
+      </tr>
+    </table>
+  </div>
+  <div class='row'>
+    <h2>Attacks</h2>
+    <table class='attacks table table-striped col-md-4'>
+      <input type='text' placeholder='Search' ng-model='attackSearchText'>
+      <tr>
+        <th>Name</th> <th>Description</th>
+      </tr>
+      <tr ng-repeat='attack in attacks | orderBy:"name" | filter:attackSearchText'>
+        <td class='attackName'>{{attack.name}}</td>
+        <td class='attackDescription'>{{attack.description}}</td>
       </tr>
     </table>
   </div>

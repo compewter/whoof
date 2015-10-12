@@ -4,6 +4,12 @@ angular.module('adminConsole.users', [])
 
   $scope.users = [];
   $scope.selectedUsers = {};
+  $scope.attacks = [
+    {
+      name: "test",
+      description: "lorem ipsum yadda yadda"
+    }
+  ];
 
   //request all users when controller loads
   SocketFactory.socket.emit('getUsers',{});
