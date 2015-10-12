@@ -1,0 +1,26 @@
+{
+  "name": "veal",
+  "version": "1.0.0",
+  "description": "A younger, leaner version of BeEF",
+  "main": "server/server.js",
+  "dependencies": {
+    "angular": "^1.4.7",
+    "angular-moment": "^0.10.3",
+    "express": "^4.13.3",
+    "socket.io": "^1.3.7"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Compewter/VEAL.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Compewter/VEAL/issues"
+  },
+  "homepage": "https://github.com/Compewter/VEAL#readme"
+}
