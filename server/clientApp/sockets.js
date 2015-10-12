@@ -17,7 +17,7 @@ module.exports.listen = function(app){
     //store the id number of the socket on it in a new property
     socket._id = id++;
 
-    socket.join('clients');
+    socket.join('users');
     
     //on new user connection, send info to admin
     var newUser = buildNewUser(socket);
@@ -42,6 +42,7 @@ var buildNewUser = function(socket){
   
   return {
     id: socket._id,
+    socketId: socket.id,
     //address is in the form ::ffff:000.000.000.000
     ip: clientIp.slice(clientIp.lastIndexOf(':') + 1),
     agent: clientAgent.slice(clientAgent.indexOf('(') + 1,clientAgent.indexOf(')')),
@@ -63,7 +64,7 @@ var disconnect = function(socket){
 };
 
 module.exports.sockets = sockets;
-
+  
 //exporting this so that it can be called from adminApp/sockets
 module.exports.sendUsers = function(users){
   users.forEach(function(user){

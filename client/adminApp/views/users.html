@@ -12,7 +12,7 @@
       </thead>
 
       <tbody>
-        <tr ng-repeat='user in users | orderBy:"id" | filter:userSearchText' class='user' ng-click='selectUser(user.id); user.state=!user.state' ng-class="{'selected' : user.state}">
+        <tr ng-repeat='user in users | orderBy:"id" | filter:userSearchText' class='user' ng-click='selectUser(user.id, user.socketId); user.state=!user.state' ng-class="{'selected' : user.state}">
           <td class='userId'>{{user.id}}</td>
           <td class='userIp'>{{user.ip}}</td>
           <td class='userAgent'>{{user.agent}}</td>

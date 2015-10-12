@@ -8,12 +8,14 @@ angular.module('adminConsole.users', [])
     {
       id: 0,
       name: "test",
-      description: "lorem ipsum yadda yadda"
+      description: "lorem ipsum yadda yadda",
+      socketEvent: 'test'
     },
     {
       id: 1,
-      name: "test2",
-      description: "lorem ipsum yadda yadda"
+      name: "attack2",
+      description: "lorem ipsum yadda yadda",
+      socketEvent: 'attack2'
     }
   ];
 
@@ -37,15 +39,25 @@ angular.module('adminConsole.users', [])
     })
   });
 
-  $scope.selectUser = function(userId){
+
+  $scope.selectUser = function(userId, userSocketId){
     if($scope.selectedUsers[userId]){
-      $scope.selectedUsers[userId] = false;
+      $scope.selectedUsers[userId] = null;
     }else{
-      $scope.selectedUsers[userId] = true;
+      $scope.selectedUsers[userId] = userSocketId;
     }
   };
 
   $scope.executeAttack = function(attackId){
-    console.log("Executing attack " + $scope.attacks[attackId].name + " on " + JSON.stringify($scope.selectedUsers));
+
+    for(var user in $scope.selectedUsers){
+      var userSocket = $scope.selectedUsers[user];
+      if(!!userSocket){
+        console.log("Executing attack " + $scope.attacks[attackId].name + " on user " + user +":" +userSocket);
+        var attackEvent = $scope.attacks[attackId].socketEvent;
+        SocketFactory.socket.emit('attackUser', { userSocket: userSocket, attack: attackEvent });
+      }
+    }
+
   };
 }]);
