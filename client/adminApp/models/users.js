@@ -6,7 +6,13 @@ angular.module('adminConsole.users', [])
   $scope.selectedUsers = {};
   $scope.attacks = [
     {
+      id: 0,
       name: "test",
+      description: "lorem ipsum yadda yadda"
+    },
+    {
+      id: 1,
+      name: "test2",
       description: "lorem ipsum yadda yadda"
     }
   ];
@@ -37,5 +43,9 @@ angular.module('adminConsole.users', [])
     }else{
       $scope.selectedUsers[userId] = true;
     }
+  };
+
+  $scope.executeAttack = function(attackId){
+    console.log("Executing attack " + $scope.attacks[attackId].name + " on " + JSON.stringify($scope.selectedUsers));
   };
 }]);

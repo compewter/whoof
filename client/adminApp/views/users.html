@@ -1,30 +1,54 @@
 <div ng-controller='UserController' class='container'>
   <div class='row'>
     <h2>Hooked Browsers</h2>
-    <table class='hooks table table-striped col-md-4'>
+    <table class='hooks table table-striped table-hover'>
+
       <input type='text' placeholder='Search' ng-model='userSearchText'>
-      <tr>
-        <th>ID</th> <th>IP</th> <th>OS</th> <th>Time Connected</th>
-      </tr>
-      <tr ng-repeat='user in users | orderBy:"id" | filter:userSearchText' class='user' ng-click='selectUser(user.id); user.state=!user.state' ng-class="{'selected' : user.state}">
-        <td class='userId'>{{user.id}}</td>
-        <td class='userIp'>{{user.ip}}</td>
-        <td class='userAgent'>{{user.agent}}</td>
-        <td class='userConnectedAt' am-time-ago='user.connectedAt'></td>
-      </tr>
+      
+      <thead>
+        <tr>
+          <th>ID</th> <th>IP</th> <th>OS</th> <th>Time Connected</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        <tr ng-repeat='user in users | orderBy:"id" | filter:userSearchText' class='user' ng-click='selectUser(user.id); user.state=!user.state' ng-class="{'selected' : user.state}">
+          <td class='userId'>{{user.id}}</td>
+          <td class='userIp'>{{user.ip}}</td>
+          <td class='userAgent'>{{user.agent}}</td>
+          <td class='userConnectedAt' am-time-ago='user.connectedAt'></td>
+        </tr>
+      </tbody>
+
     </table>
   </div>
   <div class='row'>
     <h2>Attacks</h2>
-    <table class='attacks table table-striped col-md-4'>
+    <table class='attacks table table-striped-multi-row table-hover'>
+
       <input type='text' placeholder='Search' ng-model='attackSearchText'>
-      <tr>
-        <th>Name</th> <th>Description</th>
-      </tr>
-      <tr ng-repeat='attack in attacks | orderBy:"name" | filter:attackSearchText'>
-        <td class='attackName'>{{attack.name}}</td>
-        <td class='attackDescription'>{{attack.description}}</td>
-      </tr>
+      
+      <thead>
+        <tr>
+          <th>Name</th> <th>Description</th>
+        </tr>
+      </thead>
+      
+      <tbody ng-repeat='attack in attacks | orderBy:"name" | filter:attackSearchText' ng-click='selectAttack(); attack.state=!attack.state'>
+      
+        <tr class='attackInfo'>
+          <td class='attackName'>{{attack.name}}</td>
+          <td class='attackDescription'>{{attack.description}}</td>
+        </tr>
+      
+        <tr class='attackConfig' ng-show='attack.state'>
+          <td class='attackConfig'>{{attack.config}}</td>
+          <td><button ng-click='executeAttack(attack.id)'>Execute</button></td>
+        </tr>
+      
+      </tbody>
+
     </table>
+  
   </div>
 </div>
