@@ -3,6 +3,7 @@ angular.module('adminConsole.users', [])
 .controller('UserController', ['$scope', 'SocketFactory', function ($scope, SocketFactory) {
 
   $scope.users = [];
+  $scope.selectedUsers = {};
 
   //request all users when controller loads
   SocketFactory.socket.emit('getUsers',{});
@@ -24,4 +25,11 @@ angular.module('adminConsole.users', [])
     })
   });
 
+  $scope.selectUser = function(userId){
+    if($scope.selectedUsers[userId]){
+      $scope.selectedUsers[userId] = false;
+    }else{
+      $scope.selectedUsers[userId] = true;
+    }
+  };
 }]);

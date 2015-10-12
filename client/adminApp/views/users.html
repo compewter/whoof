@@ -1,12 +1,11 @@
 <div ng-controller='UserController' class='container'>
   <div class='row'>
-    <table class='table table-striped'>
-    <input type='text' placeholder='Search' ng-model='searchText'>
+    <table class='table table-striped col-md-4'>
+      <input type='text' placeholder='Search' ng-model='searchText'>
       <tr>
-        <th></th><th>ID</th> <th>IP</th> <th>OS</th> <th>Time Connected</th>
+        <th>ID</th> <th>IP</th> <th>OS</th> <th>Time Connected</th>
       </tr>
-      <tr ng-repeat='user in users | orderBy:"id" | filter:searchText' class='user'>
-        <td class='chkbox'><input type='checkbox'></td>
+      <tr ng-repeat='user in users | orderBy:"id" | filter:searchText' class='user' ng-click='selectUser(user.id); user.state=!user.state' ng-class="{'selected' : user.state}">
         <td class='id'>{{user.id}}</td>
         <td class='ip'>{{user.ip}}</td>
         <td class='ip'>{{user.agent}}</td>
