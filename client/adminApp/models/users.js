@@ -4,23 +4,12 @@ angular.module('adminConsole.users', [])
 
   $scope.users = [];
   $scope.selectedUsers = {};
-  $scope.attacks = [
-    {
-      id: 0,
-      name: "test",
-      description: "lorem ipsum yadda yadda",
-      socketEvent: 'test'
-    },
-    {
-      id: 1,
-      name: "attack2",
-      description: "lorem ipsum yadda yadda",
-      socketEvent: 'attack2'
-    }
-  ];
 
   //request all users when controller loads
-  SocketFactory.socket.emit('getUsers',{});
+  SocketFactory.socket.emit('getUsers', {});
+
+  //request all attacks when controller loads
+  SocketFactory.socket.emit('getAttacks', {});
 
   SocketFactory.socket.on('newUser', function(user){
     $scope.$apply(function(){
@@ -36,9 +25,15 @@ angular.module('adminConsole.users', [])
           $scope.users.splice(i,1);
         }
       }
-    })
+    });
   });
 
+  SocketFactory.socket.on('attacks', function(attacks){
+    //all attacks are stored in ./attacks.js
+    $scope.$apply(function(){
+      $scope.attacks = attacks;
+    });
+  });
 
   $scope.selectUser = function(userId, userSocketId){
     if($scope.selectedUsers[userId]){
@@ -48,16 +43,17 @@ angular.module('adminConsole.users', [])
     }
   };
 
-  $scope.executeAttack = function(attackId){
-
+  $scope.executeAttack = function(attackName){
     for(var user in $scope.selectedUsers){
-      var userSocket = $scope.selectedUsers[user];
-      if(!!userSocket){
-        console.log("Executing attack " + $scope.attacks[attackId].name + " on user " + user +":" +userSocket);
-        var attackEvent = $scope.attacks[attackId].socketEvent;
-        SocketFactory.socket.emit('attackUser', { userSocket: userSocket, attack: attackEvent });
-      }
-    }
 
+      var userSocket = $scope.selectedUsers[user];
+
+      if(!!userSocket){ //verify user is selected
+        console.log("Executing attack " + attackName + " on user " + user +":" +userSocket);
+        SocketFactory.socket.emit('attackUser', { userSocket: userSocket, attack: attackName });
+      }
+
+    }
   };
+
 }]);

