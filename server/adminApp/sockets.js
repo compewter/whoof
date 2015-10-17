@@ -24,6 +24,7 @@ module.exports.listen = function(app){
     socket.on('disconnect', disconnect);
 
     socket.on('attackUser', attackUser);
+
   });
 
   return io;

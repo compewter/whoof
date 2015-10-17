@@ -35,6 +35,10 @@ angular.module('adminConsole.users', [])
     });
   });
 
+  SocketFactory.socket.on('result', function(result){
+    console.log(result.status);
+  });
+
   $scope.selectUser = function(userId, userSocketId){
     if($scope.selectedUsers[userId]){
       $scope.selectedUsers[userId] = null;
