@@ -2,6 +2,7 @@ var socketio = require('socket.io');
 var clientSockets = require('../clientApp/sockets');
 var server = require('../server');
 var attacksObj = require('../attacks');
+//attacks is stored as an object for constant time lookup
 var attacks = attacksObj.attacks;
 var attacksArr = [];
 

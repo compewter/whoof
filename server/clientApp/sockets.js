@@ -25,7 +25,9 @@ module.exports.listen = function(app){
 
     sockets.push(newUser);
 
-    socket.on('result', result);
+    socket.on('result', function(data){
+      result(data,socket);
+    });
 
     //when user disconnects, let admin know
     socket.on('disconnect', function(){
@@ -65,7 +67,8 @@ var disconnect = function(socket){
   };
 };
 
-var result = function(result){
+var result = function(result, socket){
+  result.id = socket._id;
   adminSocket.emit('result', result);
 };
 

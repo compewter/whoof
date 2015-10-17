@@ -51,4 +51,14 @@
     </table>
   
   </div>
+
+  <div class='row'>
+    <h2>Results</h2>
+    <ul>
+      <li ng-repeat='result in results | orderBy:"-timestamp"'>
+        <span>{{result.message}}</span>
+        <span am-time-ago="result.timestamp"></span>
+      </li>
+    </ul>
+  </div>
 </div>

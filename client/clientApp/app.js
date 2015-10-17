@@ -14,9 +14,6 @@ socket.on('execute', function(data){
     }
   }
 
-  console.log(result);
-
   //data.func updates result which we send back to the admins
   socket.emit('result', result);
-  socket.emit('test')
 });

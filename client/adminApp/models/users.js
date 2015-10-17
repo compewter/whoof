@@ -4,6 +4,7 @@ angular.module('adminConsole.users', [])
 
   $scope.users = [];
   $scope.selectedUsers = {};
+  $scope.results = [];
 
   //request all users when controller loads
   SocketFactory.socket.emit('getUsers', {});
@@ -36,7 +37,12 @@ angular.module('adminConsole.users', [])
   });
 
   SocketFactory.socket.on('result', function(result){
-    console.log(result.status);
+    $scope.$apply(function(){
+      $scope.results.push({
+        message: result.status +" on user " + result.id,
+        timestamp: new Date()
+      });
+    });
   });
 
   $scope.selectUser = function(userId, userSocketId){
@@ -53,7 +59,10 @@ angular.module('adminConsole.users', [])
       var userSocket = $scope.selectedUsers[user];
 
       if(!!userSocket){ //verify user is selected
-        console.log("Executing attack " + attackName + " on user " + user +":" +userSocket);
+        $scope.results.push({
+          message: "Executing attack " + attackName + " on user " + user,
+          timestamp: new Date()
+        });
         SocketFactory.socket.emit('attackUser', { userSocket: userSocket, attack: attackName });
       }
 
