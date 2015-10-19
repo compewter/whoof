@@ -15,6 +15,7 @@ module.exports.attacks = {
 
       //perform attack logic
       var test = "test result value";
+
       console.log('executing test');
       var succesful = true;
 
@@ -26,7 +27,7 @@ module.exports.attacks = {
         
         //use results to store content we would like to display to the admin
         result.results = {
-          success: true,
+          successful: true,
           test: test
         }
       }else{
@@ -34,7 +35,7 @@ module.exports.attacks = {
         result.followup = false;
 
         result.results = {
-          success: false,
+          successful: false,
           reason: "Specify reason module failed"
         }
       }
@@ -59,6 +60,7 @@ module.exports.attacks = {
         result.followup = false;
 
         result.results = {
+          successful : true,
           followupTest : followupTest
         };
       },

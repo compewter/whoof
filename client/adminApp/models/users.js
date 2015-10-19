@@ -50,6 +50,7 @@ angular.module('adminConsole.users', [])
   });
 
   $scope.executeAttack = function(attackName, inputs, followup, victim){
+  
     var victimSockets = {};
     var userSocket;
     
@@ -69,11 +70,13 @@ angular.module('adminConsole.users', [])
     for(var user in victimSockets){
       $scope.results.push({
         message: "Executing attack " + attackName + " on user " + user,
+        successful: true,
         timestamp: new Date()
       });
       SocketFactory.socket.emit('attackUser', { 
         userSocket: victimSockets[user], 
-        attack: attackName, 
+        attack: attackName,
+        inputs: inputs,
         followup: followup
       });
     }
@@ -83,16 +86,28 @@ angular.module('adminConsole.users', [])
 
     result.message = result.status + " on user " + result.id;
     result.timestamp = new Date();
+
     if(result.followup){
       findAttackByName(result.name, function(ind){
+        //doing this results in the generic inputs being bound to the result.inputs
+        //result.inputs = $scope.attacks[ind].followup.inputs;
+
         //add inputs to result object
-        result.inputs = $scope.attacks[ind].followup.inputs;
+        result.inputs = {};
+        for( var input in $scope.attacks[ind].followup.inputs ){
+          result.inputs[input] = $scope.attacks[ind].followup.inputs[input] || '';
+        } 
       });
+    }
+
+    if(!result.results.successful){
+      result.message += " : " + JSON.stringify(result.err);
     }
 
     $scope.$apply(function(){
       $scope.results.push(result);
     });
+    
   });
 
   var findAttackByName = function(name, cb){
