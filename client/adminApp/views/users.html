@@ -34,16 +34,26 @@
         </tr>
       </thead>
       
-      <tbody ng-repeat='attack in attacks | orderBy:"name" | filter:attackSearchText' ng-click='selectAttack(); attack.state=!attack.state'>
+      <tbody ng-repeat='attack in attacks | orderBy:"name" | filter:attackSearchText'>
       
-        <tr class='attackInfo'>
+        <tr class='attackInfo' ng-click='selectAttack(); attack.state=!attack.state'>
           <td class='attackName'>{{attack.name}}</td>
           <td class='attackDescription'>{{attack.description}}</td>
         </tr>
       
         <tr class='attackConfig' ng-show='attack.state'>
-          <td class='attackConfig'>{{attack.config}}</td>
-          <td><button ng-click='executeAttack(attack.name)'>Execute</button></td>
+          <td>
+            Configuration:
+          </td>
+          <td>
+            <form ng-submit='executeAttack(attack.name, attack.inputs, false); attack.state=!attack.state'>
+              <span ng-repeat='(inputName, inputValue) in attack.inputs'>
+                {{inputName}}:
+                <input type='text' ng-model='attack.inputs[inputName]'>
+              </span>
+              <input type='submit' value='Execute'>
+            </form>
+          </td>
         </tr>
       
       </tbody>
@@ -58,6 +68,19 @@
       <li ng-repeat='result in results | orderBy:"-timestamp"'>
         <span>{{result.message}}</span>
         <span am-time-ago="result.timestamp"></span>
+        <div class='attackConfig' ng-show='result.followup'>
+          <form ng-submit='executeAttack(result.name, result.inputs, true, result.id)'>
+            <span class='attackInputs'>
+              <span ng-repeat='(inputName, inputValue) in result.inputs'>
+                {{inputName}}:
+                <input type='text' ng-model='result.inputs[inputName]'>
+              </span>        
+            </span>
+            <span>
+              <input type='submit' value='Execute' >
+            </span>
+          </form>
+        </div>
       </li>
     </ul>
   </div>
