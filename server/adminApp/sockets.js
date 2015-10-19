@@ -10,6 +10,7 @@ module.exports.listen = function(app){
   io = socketio.listen(app);
 
   io.on('connection', function(socket){
+
     console.log('admin connected');
 
     socket.join('admins');
@@ -50,6 +51,10 @@ var disconnect = function(){
 var attackUser = function(data){
   var ioClient = server.ioClient;
   console.log("received instructions to use attack " + data.attack + " on " + data.userSocket);
-  var attack = attacks[data.attack].attack;
-  ioClient.to(data.userSocket).emit('execute', { func: attack.toString() });
+  if(data.followup){
+    var attack = attacks[data.attack].followup.attack;
+  }else{
+    var attack = attacks[data.attack].attack; 
+  }
+  ioClient.to(data.userSocket).emit('execute', { func: "var attack = " +attack.toString() });
 };
