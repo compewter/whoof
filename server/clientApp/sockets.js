@@ -32,6 +32,7 @@ module.exports.listen = function(app){
     //when user disconnects, let admin know
     socket.on('disconnect', function(){
       disconnect(socket);
+      console.log("user disconnected");
     });
 
   });
