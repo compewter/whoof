@@ -20,14 +20,6 @@ describe('server tests', function () {
   
   describe('admin app', function () {
 
-    before(function () {
-      adminServer.listen(ADMINPORT);
-    });
-
-    after(function () {
-      adminServer.close();
-    });
-
     describe('admin server API', function () {
 
       it('should respond to get requests for the admin app', function(done){
@@ -86,14 +78,6 @@ describe('server tests', function () {
   });
 
   describe('client app', function () {
-
-    before(function () {
-      clientServer.listen(CLIENTPORT);
-    });
-
-    after(function () {
-      clientServer.close();
-    });
 
     describe('client server API', function () {
 
