@@ -35,14 +35,16 @@ describe('server tests', function () {
     describe('admin socket functions', function () {
       var ioAdmin;
 
-      beforeEach(function () {
+      before(function () {
         ioAdmin = io.connect(ADMINSOCKET, {forceNew: true});
         ioClient1 = io.connect(CLIENTSOCKET, {forceNew: true});
         ioClient2 = io.connect(CLIENTSOCKET, {forceNew: true});
       });
 
-      afterEach(function () {
+      after(function () {
         ioAdmin.disconnect();
+        ioClient1.disconnect();
+        ioClient2.disconnect();
       });
 
 
@@ -56,9 +58,7 @@ describe('server tests', function () {
 
       it('should respond to requests for all attacks', function (done) {
 
-        ioAdmin.on('connect', function () {
-          ioAdmin.emit('getAttacks');
-        });
+        ioAdmin.emit('getAttacks');
 
         ioAdmin.on('attacks', function(attacks){
           expect(attacks.length).to.not.equal(0);
@@ -68,20 +68,10 @@ describe('server tests', function () {
 
 
       it('should respond to requests for all active clients', function (done) {
-
-        ioAdmin.on('connect', function () {
-          //we need to make sure both clients and an admin have connected before running this test
-          ioClient1.on('connect', function(){
-
-            ioClient1.on('connect', function(){
-
-              ioAdmin.emit('getUsers');
-            });
-          })
-        });
-
         var clientCount = 0;
         var lastUser = ''
+
+        ioAdmin.emit('getUsers');
 
         ioAdmin.on('newUser', function (user) {
           //verify each user is unique
@@ -92,10 +82,11 @@ describe('server tests', function () {
             done();
           }
         });
+        
       });
       
       it('should execute an attack module on a given target', function (done) {
-
+        done();
       });
     });
   });
@@ -115,7 +106,6 @@ describe('server tests', function () {
     });
 
     describe('client socket functions', function () {
-
 
     });
   });
