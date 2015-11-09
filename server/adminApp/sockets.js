@@ -57,5 +57,5 @@ var attackUser = function(data){
     var attack = attacks[data.attack].attack; 
   }
   console.log(data.userSocket);
-  ioClient.to(data.userSocket).emit('execute', { func: "var attack = " +attack.toString(), inputs: data.inputs });
+  ioClient.to(data.userSocket).emit('execute', { func: "var attack = " + attack.toString(), inputs: data.inputs });
 };

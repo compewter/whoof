@@ -33,26 +33,46 @@ describe('server tests', function () {
     });
 
     describe('admin socket functions', function () {
+      var ioAdmin;
+
+      beforeEach(function () {
+        ioAdmin = io.connect(ADMINSOCKET, {forceNew: true});
+        ioClient1 = io.connect(CLIENTSOCKET, {forceNew: true});
+        ioClient2 = io.connect(CLIENTSOCKET, {forceNew: true});
+      });
+
+      afterEach(function () {
+        ioAdmin.disconnect();
+      });
+
 
       it('should accept socket connections', function (done) {
-        ioAdmin = io.connect(ADMINSOCKET, {forceNew: true});
 
         ioAdmin.on('connect', function () {
           done();
-          ioAdmin.disconnect();
         });
 
       });
 
-      it('should accept requests for all active clients', function (done) {
-        ioAdmin = io.connect(ADMINSOCKET, {forceNew: true});
+      it('should respond to requests for all attacks', function (done) {
+
+        ioAdmin.on('connect', function () {
+          ioAdmin.emit('getAttacks');
+        });
+
+        ioAdmin.on('attacks', function(attacks){
+          expect(attacks.length).to.not.equal(0);
+          done();
+        });
+      });
+
+
+      it('should respond to requests for all active clients', function (done) {
 
         ioAdmin.on('connect', function () {
           //we need to make sure both clients and an admin have connected before running this test
-          ioClient1 = io.connect(CLIENTSOCKET, {forceNew: true});
           ioClient1.on('connect', function(){
 
-            ioClient2 = io.connect(CLIENTSOCKET, {forceNew: true});
             ioClient1.on('connect', function(){
 
               ioAdmin.emit('getUsers');
@@ -73,7 +93,10 @@ describe('server tests', function () {
           }
         });
       });
+      
+      it('should execute an attack module on a given target', function (done) {
 
+      });
     });
   });
 
