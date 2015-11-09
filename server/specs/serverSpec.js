@@ -22,7 +22,7 @@ describe('server tests', function () {
 
     describe('admin server API', function () {
 
-      it('should respond to get requests for the admin app', function(done){
+      it('should respond to get requests for the admin app', function (done) {
         request(ADMINSOCKET, function(err, res, body){
           expect(err).to.be.null;
           expect(body).to.have.string('<!DOCTYPE html>');
@@ -33,7 +33,10 @@ describe('server tests', function () {
     });
 
     describe('admin socket functions', function () {
-      var ioAdmin;
+      var ioAdmin,
+          ioClient1,
+          ioClient2,
+          attacks;
 
       before(function () {
         ioAdmin = io.connect(ADMINSOCKET, {forceNew: true});
@@ -60,8 +63,9 @@ describe('server tests', function () {
 
         ioAdmin.emit('getAttacks');
 
-        ioAdmin.on('attacks', function(attacks){
-          expect(attacks.length).to.not.equal(0);
+        ioAdmin.on('attacks', function (res) {
+          expect(res.length).to.not.equal(0);
+          attacks = res;
           done();
         });
       });
@@ -86,7 +90,20 @@ describe('server tests', function () {
       });
       
       it('should execute an attack module on a given target', function (done) {
-        done();
+
+        var attack = attacks[0];
+
+        ioAdmin.emit('attackUser', { 
+          userSocket: ioClient1.id, 
+          attack: attack.name
+        });
+
+        //ioClient1 is not in the list of connected sockets at this point. our test must somehow be adding the admin socket instead of the client sockets
+        ioClient1.on('execute', function(instructions){
+          expect(instructions.func).to.have.string("var attack = ");
+          done();
+        });
+
       });
     });
   });
@@ -95,8 +112,8 @@ describe('server tests', function () {
 
     describe('client server API', function () {
 
-      it('should respond to get requests for the client app', function(done){
-        request(CLIENTSOCKET, function(err, res, body){
+      it('should respond to get requests for the client app', function (done) {
+        request(CLIENTSOCKET, function (err, res, body) {
           expect(err).to.be.null;
           expect(body).to.have.string('<!DOCTYPE html>');
           done();

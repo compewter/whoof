@@ -26,4 +26,4 @@ adminServer.listen( 1337 );
 module.exports.clientServer = clientServer;
 module.exports.ioClient = ioClient;
 module.exports.adminServer  = adminServer;
-module.exports.ioClient = ioAdmin;
+module.exports.ioAdmin = ioAdmin;
