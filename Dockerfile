@@ -7,6 +7,7 @@ RUN npm install nodemon -g
 WORKDIR /src
 ADD . /src
 RUN npm install -g bower
+RUN npm install -g mocha
 RUN npm install
 RUN bower install --allow-root
 
