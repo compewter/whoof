@@ -16,10 +16,10 @@ var CLIENTPORT = '8080';
 var ADMINSOCKET = 'http://' + IP + ':' + ADMINPORT;
 var CLIENTSOCKET = 'http://' + IP + ':' + CLIENTPORT;
 
-describe('server tests', function(){
+describe('server tests', function () {
   
-  describe('admin app', function(){
-    
+  describe('admin app', function () {
+
     before(function () {
       adminServer.listen(ADMINPORT);
     });
@@ -28,7 +28,7 @@ describe('server tests', function(){
       adminServer.close();
     });
 
-    describe('admin server API', function(){
+    describe('admin server API', function () {
 
       it('should respond to get requests for the admin app', function(done){
         request(ADMINSOCKET, function(err, res, body){
@@ -39,9 +39,53 @@ describe('server tests', function(){
       });
 
     });
+
+    describe('admin socket functions', function () {
+
+      it('should accept socket connections', function (done) {
+        ioAdmin = io.connect(ADMINSOCKET, {forceNew: true});
+
+        ioAdmin.on('connect', function () {
+          done();
+          ioAdmin.disconnect();
+        });
+
+      });
+
+      it('should accept requests for all active clients', function (done) {
+        ioAdmin = io.connect(ADMINSOCKET, {forceNew: true});
+
+        ioAdmin.on('connect', function () {
+          //we need to make sure both clients and an admin have connected before running this test
+          ioClient1 = io.connect(CLIENTSOCKET, {forceNew: true});
+          ioClient1.on('connect', function(){
+
+            ioClient2 = io.connect(CLIENTSOCKET, {forceNew: true});
+            ioClient1.on('connect', function(){
+
+              ioAdmin.emit('getUsers');
+            });
+          })
+        });
+
+        var clientCount = 0;
+        var lastUser = ''
+
+        ioAdmin.on('newUser', function (user) {
+          //verify each user is unique
+          expect(user).to.not.equal(lastUser);
+          lastUser = user;
+          clientCount++;
+          if(clientCount === 2){
+            done();
+          }
+        });
+      });
+
+    });
   });
 
-  describe('client app', function(){
+  describe('client app', function () {
 
     before(function () {
       clientServer.listen(CLIENTPORT);
@@ -51,7 +95,7 @@ describe('server tests', function(){
       clientServer.close();
     });
 
-    describe('client server API', function(){
+    describe('client server API', function () {
 
       it('should respond to get requests for the client app', function(done){
         request(CLIENTSOCKET, function(err, res, body){
@@ -62,7 +106,11 @@ describe('server tests', function(){
       });
 
     });
+
+    describe('client socket functions', function () {
+
+
+    });
   });
   
-
 });
