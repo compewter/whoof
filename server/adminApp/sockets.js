@@ -11,7 +11,7 @@ module.exports.listen = function(app){
 
   io.on('connection', function(socket){
 
-    console.log('admin connected');
+    // console.log('admin connected');
 
     socket.join('admins');
 
@@ -45,12 +45,12 @@ var getAttacks = function(){
 };
 
 var disconnect = function(){
-  console.log('admin disconnected');
+  // console.log('admin disconnected');
 };
 
 var attackUser = function(data){
   var ioClient = server.ioClient;
-  console.log("received instructions to use attack " + data.attack + " on " + data.userSocket);
+  // console.log("received instructions to use attack " + data.attack + " on " + data.userSocket);
   if(data.followup){
     var attack = attacks[data.attack].followup.attack;
   }else{

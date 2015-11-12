@@ -15,7 +15,7 @@
     "supertest": "^1.1.0"
   },
   "scripts": {
-    "test": "mocha server/specs/serverSpec.js",
+    "test": "mocha server/specs/**/*.js",
     "start": "node server/server.js"
   },
   "repository": {

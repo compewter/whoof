@@ -12,7 +12,7 @@ module.exports.listen = function(app){
 
   io.on('connection', function(socket){
     
-    console.log('a user connected');
+    // console.log('a user connected');
 
     //store the id number of the socket on it in a new property
     socket._id = id++;
@@ -25,6 +25,7 @@ module.exports.listen = function(app){
 
     sockets.push(newUser);
 
+    //when an attack module has finished running. Relay it back to the admins
     socket.on('result', function(data){
       result(data,socket);
     });
@@ -32,7 +33,7 @@ module.exports.listen = function(app){
     //when user disconnects, let admin know
     socket.on('disconnect', function(){
       disconnect(socket);
-      console.log("user disconnected");
+      // console.log("user disconnected");
     });
 
   });
