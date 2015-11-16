@@ -12,7 +12,7 @@ module.exports.listen = function(app){
 
   io.on('connection', function(socket){
     
-    console.log('a user connected');
+    // console.log('a user connected');
 
     //store the id number of the socket on it in a new property
     socket._id = id++;
@@ -20,19 +20,20 @@ module.exports.listen = function(app){
     socket.join('users');
     
     //on new user connection, send info to admin
-    var newUser = buildNewUser(socket);
+    var newUser = module.exports.buildNewUser(socket);
     adminSocket.emit('newUser', newUser);
 
     sockets.push(newUser);
 
+    //when an attack module has finished running. Relay it back to the admins
     socket.on('result', function(data){
-      result(data,socket);
+      module.exports.result(data,socket);
     });
 
     //when user disconnects, let admin know
     socket.on('disconnect', function(){
-      disconnect(socket);
-      console.log("user disconnected");
+      module.exports.disconnect(socket);
+      // console.log("user disconnected");
     });
 
   });
@@ -40,7 +41,7 @@ module.exports.listen = function(app){
   return io;
 };
 
-var buildNewUser = function(socket){
+module.exports.buildNewUser = function(socket){
 
   var clientIp = socket.handshake.address;
   var clientAgent = socket.handshake.headers['user-agent'];
@@ -55,7 +56,7 @@ var buildNewUser = function(socket){
   };
 };
 
-var disconnect = function(socket){
+module.exports.disconnect = function(socket){
   adminSocket.emit('userLeft', {
     id: socket._id
   });
@@ -68,16 +69,9 @@ var disconnect = function(socket){
   };
 };
 
-var result = function(result, socket){
+module.exports.result = function(result, socket){
   result.id = socket._id;
   adminSocket.emit('result', result);
 };
 
 module.exports.sockets = sockets;
-  
-//exporting this so that it can be called from adminApp/sockets
-module.exports.sendUsers = function(users){
-  users.forEach(function(user){
-    adminSocket.emit('newUser', user);
-  });
-};

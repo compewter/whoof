@@ -22,6 +22,8 @@ adminApp.use( express.static(__dirname + '/../bower_components/') );
 adminServer.listen( 1337 );
 
 
-module.exports.clientApp = clientApp;
+
+module.exports.clientServer = clientServer;
 module.exports.ioClient = ioClient;
-module.exports.adminApp  = adminApp;
+module.exports.adminServer  = adminServer;
+module.exports.ioAdmin = ioAdmin;
