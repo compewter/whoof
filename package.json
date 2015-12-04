@@ -11,12 +11,16 @@
   },
   "devDependencies": {
     "chai": "^3.4.1",
+    "gulp-exit": "0.0.2",
+    "gulp-mocha": "^2.2.0",
+    "gulp-shell": "^0.5.1",
+    "mocha": "^2.3.4",
     "request": "^2.65.0",
-    "selenium-webdriver": "^2.48.2",
-    "supertest": "^1.1.0"
+    "sauce-connect-launcher": "^0.13.0",
+    "webdriverio": "^3.3.0"
   },
   "scripts": {
-    "test": "mocha server/specs/**/*.js",
+    "test": "grunt test",
     "start": "node server/server.js"
   },
   "repository": {
