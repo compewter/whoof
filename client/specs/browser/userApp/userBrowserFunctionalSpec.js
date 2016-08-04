@@ -3,7 +3,7 @@ var assert = chai.assert;
 var should = chai.should();
 var expect = chai.expect;
 
-var env = require('../../../.env.json');
+var env = require('../../../../.env.json');
 
 var client = require('webdriverio').remote({
   user: env.SAUCE_USERNAME,
@@ -13,8 +13,8 @@ var client = require('webdriverio').remote({
   }
 });
 
-describe('client browser functional tests', function(){
-  it('should load the client page', function(done){
+describe('user browser functional tests', function(){
+  it('should load the user page', function(done){
     client
       .init()
       .url('http://localhost:8080')

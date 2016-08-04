@@ -45,7 +45,7 @@ module.exports.attacks = {
     inputs:{
       input1: 'default value',
       input2: '',
-      input3: '',
+      input3: ''
     },
 
     followup: {
@@ -116,32 +116,35 @@ var template = {
 
   description: '',
 
+  //function to execute on client
   attack: function(){
-    var result = {};
-    result.name = '';
+    //result stores results of attack and is sent back by client
+    //result is initialized client side
+    var result = {}; //this must be named result in order to emit back the results properly
+    result.name = ''; //specify name of attack returning a result
 
+    //perform attack logic
+    //use inputs object to set case by case variables
+
+
+    //handle results of the attack
     result.status = '';
+    //sometimes we will want to follow up with admin input
     result.followup = false;
 
+    //use results to store content we would like to display to the admin
     result.results = {
       successful: false,
       reason: 'Specify reason module failed'
     }
   },
 
+  //inputs are set with the admin web app attack form
   inputs: {
 
   },
 
-  followup: {
-    name: '',
-    attack: function(){
-      result.status = '';
-      result.followup = false;
-
-      result.results = {
-        successful : true
-      };
-    }
-  }
+  //if result.followup is set to true, it will execute this function on the client with optional follow up inputs
+  //this needs to be the mongodb document id of another attack
+  followup: "otherAttack._id"
 }

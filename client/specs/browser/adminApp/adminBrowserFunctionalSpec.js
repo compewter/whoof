@@ -3,7 +3,7 @@ var assert = chai.assert;
 var should = chai.should();
 var expect = chai.expect;
 
-var env = require('../../../.env.json');
+var env = require('../../../../.env.json');
 
 var client = require('webdriverio').remote({
   user: env.SAUCE_USERNAME,

@@ -18,14 +18,14 @@ var CLIENTSOCKET = 'http://' + IP + ':' + CLIENTPORT;
 
 
 
-var clientSockets = require('../../clientApp/sockets');
+var clientSockets = require('../../userApp/sockets');
 
 
-describe('client server tests', function () {
+describe('user server tests', function () {
 
-  describe('client server API', function () {
+  describe('user server API', function () {
 
-    it('should respond to get requests for the client app', function (done) {
+    it('should respond to get requests for the user app', function (done) {
       request(CLIENTSOCKET, function (err, res, body) {
         expect(err).to.be.null;
         expect(body).to.have.string('<!DOCTYPE html>');
@@ -35,7 +35,7 @@ describe('client server tests', function () {
 
   });
 
-  describe('client socket functions', function () {
+  describe('user socket functions', function () {
     var ioAdmin,
         ioClient1,
         ioClient2,

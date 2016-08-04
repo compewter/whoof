@@ -4,15 +4,33 @@
   "description": "A younger, leaner version of BeEF",
   "main": "server/server.js",
   "dependencies": {
-    "angular": "^1.4.7",
-    "angular-moment": "^0.10.3",
+    "babel-core": "^6.4.5",
+    "babel-loader": "^6.2.2",
+    "babel-plugin-react-transform": "^2.0.0",
+    "babel-preset-es2015": "^6.3.13",
+    "babel-preset-react": "^6.3.13",
+    "babel-runtime": "^6.3.19",
     "express": "^4.13.3",
-    "socket.io": "^1.3.7"
+    "react": "^0.14.7",
+    "react-dom": "^0.14.7",
+    "react-redux": "^4.4.0",
+    "react-transform-hmr": "^1.0.2",
+    "redux": "^3.3.0",
+    "redux-logger": "^2.5.0",
+    "redux-thunk": "^1.0.3",
+    "sequelize": "^3.19.0",
+    "socket.io": "^1.3.7",
+    "socket.io-client": "^1.4.5",
+    "sqlite3": "^3.1.1",
+    "webpack": "^1.12.13",
+    "webpack-dev-middleware": "^1.5.1",
+    "webpack-hot-middleware": "^2.6.4"
   },
   "devDependencies": {
     "chai": "^3.4.1",
     "gulp-exit": "0.0.2",
     "gulp-mocha": "^2.2.0",
+    "gulp-nodemon": "^2.0.4",
     "gulp-shell": "^0.5.1",
     "mocha": "^2.3.4",
     "request": "^2.65.0",
@@ -20,8 +38,8 @@
     "webdriverio": "^3.3.0"
   },
   "scripts": {
-    "test": "grunt test",
-    "start": "node server/server.js"
+    "test": "gulp test",
+    "start": "supervisor --ignore client/adminApp/components,client/adminApp/containers,client/adminApp/redux server/server.js"
   },
   "repository": {
     "type": "git",

