@@ -1,5 +1,5 @@
-require('../../server');
-var clientSockets = require('../../clientApp/sockets');
+// require('../../server');
+var userSockets = require('../../userApp/sockets');
 var io = require('socket.io/node_modules/socket.io-client');
 var chai = require('chai');
 var assert = chai.assert;
@@ -8,16 +8,16 @@ var expect = chai.expect;
 
 var IP = '127.0.0.1';
 var ADMINPORT = '1337';
-var CLIENTPORT = '8080';
+var USERPORT = '8080';
 var ADMINSOCKET = 'http://' + IP + ':' + ADMINPORT;
-var CLIENTSOCKET = 'http://' + IP + ':' + CLIENTPORT;
+var USERSOCKET = 'http://' + IP + ':' + USERPORT;
 
-describe('client server unit tests', function () {
+describe('user server unit tests', function () {
   var ioClient;
   
   before(function () {
     ioAdmin = io.connect(ADMINSOCKET, {forceNew: true});
-    ioClient = io.connect(CLIENTSOCKET, {forceNew: true});
+    ioClient = io.connect(USERSOCKET, {forceNew: true});
   });
 
   after(function () {
@@ -38,7 +38,7 @@ describe('client server unit tests', function () {
         time: new Date()
       }
     }
-    var newUser = clientSockets.buildNewUser(socket);
+    var newUser = userSockets.buildNewUser(socket);
 
     expect(newUser.id).to.equal(socket._id);
     expect(newUser.socketId).to.equal(socket.id);
@@ -49,7 +49,7 @@ describe('client server unit tests', function () {
   });
 
   it('sockets should contain the connected client', function (done) {
-    expect(clientSockets.sockets.length).to.equal(1);
+    expect(userSockets.sockets.length).to.equal(1);
     done();
   });
 
@@ -57,7 +57,7 @@ describe('client server unit tests', function () {
     ioClient.disconnect();
 
     ioAdmin.on('userLeft', function(){
-      expect(clientSockets.sockets.length).to.equal(0);
+      expect(userSockets.sockets.length).to.equal(0);
       done();
     });
   });

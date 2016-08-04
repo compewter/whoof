@@ -1,4 +1,4 @@
-require('../../server');
+// require('../../server');
 var adminSockets = require('../../adminApp/sockets');
 var io = require('socket.io/node_modules/socket.io-client');
 var chai = require('chai');
@@ -42,7 +42,7 @@ describe('admin server unit tests', function () {
     });
   });
 
-  it('attackUser should send attacks to admins', function (done) {
+  it('attackUser should send attack instructions to targeted user', function (done) {
     var attack = {
       attack: "test",
       userSocket: ioClient.id

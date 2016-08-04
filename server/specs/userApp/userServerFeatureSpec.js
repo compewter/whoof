@@ -16,11 +16,16 @@ var CLIENTPORT = '8080';
 var ADMINSOCKET = 'http://' + IP + ':' + ADMINPORT;
 var CLIENTSOCKET = 'http://' + IP + ':' + CLIENTPORT;
 
-describe('client server tests', function () {
 
-  describe('client server API', function () {
 
-    it('should respond to get requests for the client app', function (done) {
+var clientSockets = require('../../userApp/sockets');
+
+
+describe('user server tests', function () {
+
+  describe('user server API', function () {
+
+    it('should respond to get requests for the user app', function (done) {
       request(CLIENTSOCKET, function (err, res, body) {
         expect(err).to.be.null;
         expect(body).to.have.string('<!DOCTYPE html>');
@@ -30,7 +35,7 @@ describe('client server tests', function () {
 
   });
 
-  describe('client socket functions', function () {
+  describe('user socket functions', function () {
     var ioAdmin,
         ioClient1,
         ioClient2,
@@ -48,13 +53,14 @@ describe('client server tests', function () {
     });
 
     it('should accept socket connections', function (done) {
-      
+
       ioClient1.on('connect', function () {
         done();
       });
     });
 
     it('should notify the admins when a user connects', function (done) {
+
       ioClient2 = io.connect(CLIENTSOCKET, {forceNew: true});
 
       ioAdmin.on('newUser', function(){
@@ -62,15 +68,8 @@ describe('client server tests', function () {
       });
     });
 
-    it('should notify the admins when a user disconnects', function (done) {
-      ioClient2.disconnect();
-
-      ioAdmin.on('userLeft', function(){
-        done();
-      });
-    });
-
     it('should relay a result back to the admins', function (done) {
+
       ioClient1.emit('result',{});
 
       ioAdmin.on('result', function(){
@@ -78,6 +77,14 @@ describe('client server tests', function () {
       });
     });
 
+    it('should notify the admins when a user disconnects', function (done) {
+
+      ioClient2.disconnect();
+
+      ioAdmin.on('userLeft', function(){
+        done();
+      });
+    });
   });
 
 });
