@@ -19,22 +19,13 @@ const Attack = db.define('Attack', {
     allowNull: false
   },
 
-  pathToAttack: {
+  constructor: {
     type: Sequelize.STRING,
     allowNull: false
   },
 
   inputs: {
     type: Sequelize.JSON,
-    allowNull: true
-  },
-
-  followup: { 
-    type: Sequelize.INTEGER, 
-    references: {
-      model: 'Attacks', 
-      key: 'id'
-    },
     allowNull: true
   }
 });

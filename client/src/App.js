@@ -1,72 +1,28 @@
-import React from 'react';
-import Victims from './Victims';
-import Attacks from './Attacks';
+import React, {Component} from 'react'
 import io from 'socket.io-client'
 
-const App = React.createClass({
-  getInitialState: function () {
-    return {
-      victims: [],
-      attacks: []
-    };
-  },
-  componentDidMount: function() {
-    let socket = io()
-    socket.on('attacks', this._attacksReceived);
-    socket.on('newUser', this._usersReceived);
-    socket.emit('getAttacks')
-    socket.emit('getUsers')
-  },
+import Victims from './components/Victims';
+import Attacks from './components/Attacks';
+import Terminal from './components/Terminal';
 
-  _attacksReceived: function(attacks){
-    console.log(attacks)
-    this.setState({ attacks })
-  },
+class App extends Component {
+  componentWillMount(){
+    this._socket = io()
+  }
 
-  _usersReceived: function(victim){
-    console.log(victim)
-    this.setState({ victims: this.state.victims.concat([victim]) })
-  },
-
-  render: function () {
+  render(){
     return (
       <div className='App'>
-        <div className='ui text container'>
-          <Victims
-            victims={this.state.victims}
-          />
-          <Attacks
-            attacks={this.state.attacks}
-          />
+        <div className='ui container'>
+          <Victims socket={this._socket}/>
+          <div className="ui section divider"></div>
+          <Attacks socket={this._socket}/>
+          <div className="ui section divider"></div>
+          <Terminal />
         </div>
       </div>
-    );
-  },
-});
+    )
+  }
+}
 
-
-// onFoodClick={
-//   (idx) => (
-//     this.setState({
-//       selectedFoods: [
-//         ...this.state.selectedFoods.slice(0, idx),
-//         ...this.state.selectedFoods.slice(
-//           idx + 1, this.state.selectedFoods.length
-//         ),
-//       ],
-//     })
-//   )
-// }
-
-
-// <FoodSearch
-//   onFoodClick={
-//     (food) => (
-//       this.setState({
-//         selectedFoods: this.state.selectedFoods.concat(food),
-//       })
-//     )
-//   }
-// />
-
-export default App;
+export default App

@@ -23,7 +23,7 @@ module.exports.add = function(newAttackOptions, cb) {
   });
 };
 
-module.exports.getAll = function(cb) {
+module.exports.findAll = function(cb) {
   models.Attack.findAll().then(function(attacks){
     cb(attacks);
   });
