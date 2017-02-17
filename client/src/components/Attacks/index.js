@@ -66,7 +66,7 @@ class Attacks extends Component {
       return false
     }
     let attackFunctionString = attackFunction.toString()
-    if(!~attackFunctionString.replace(/ /g,'').indexOf('function(params')){
+    if(!~attackFunctionString.replace(/ /g, '').match(/function[a-zA-Z]+\(params/)){
       this.props.logger(`attack ${type} function is missing parameter 'params'`)
       return false
     }

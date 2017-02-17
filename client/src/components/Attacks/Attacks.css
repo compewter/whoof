@@ -12,8 +12,3 @@ tr.active{
   /*semantic ui forces this row into the first cell without this*/
   display: table-row !important;
 }
-
-.attack-ta{
-  height: 300px;
-  width: 500px;
-}

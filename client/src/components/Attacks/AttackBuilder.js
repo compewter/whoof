@@ -1,16 +1,37 @@
 import React, {Component, PropTypes} from 'react'
+import AceEditor from 'react-ace'
+import 'brace/mode/java';
+import 'brace/theme/monokai';
 
 class AttackBuilder extends Component {
+  componentDidMount() {
+    this._prepare = `function prepare(params, logger){\n  logger("Preparing custom attack...");\n  return params;\n}`
+    this._execute = `function execute(params){\n  params.time = new Date()\n  socket.emit("result", {\n    success: true,\n    message: "Successfully executed attack",\n    params\n  });\n}`
+    this._followup = `function followup(params, logger){\n  logger("Successfully pwnd victim at " + params.time);\n}`
+  }
   _buildAttack = () => {
     this.props.logger('Building custom attack...')
     let attack = {
-      prepare: document.getElementById('attack-prep-ta').value,
-      execute: document.getElementById('attack-execute-ta').value,
-      followup: document.getElementById('attack-followup-ta').value,
+      prepare: this._prepare,
+      execute: this._execute,
+      followup: this._followup,
       inputs: {},
       name: 'custom'
     }
     this.props.execute(attack)
+  }
+
+  _setPrepare = (newValue)=>{
+    console.log(newValue)
+    this._prepare = newValue
+  }
+
+  _setExecute = (newValue)=>{
+    this._execute = newValue
+  }
+
+  _setFollowup = (newValue)=>{
+    this._followup = newValue
   }
 
   render(){
@@ -36,7 +57,16 @@ class AttackBuilder extends Component {
             </p>
           </td>
           <td>
-            <textarea id="attack-prep-ta" className='attack-ta' defaultValue={`function(params, logger){\n  logger("Preparing custom attack...");\n  return params;\n}`}></textarea>
+            <AceEditor
+              mode="javascript"
+              theme="monokai"
+              name="attack-prep-ta"
+              height='300px'
+              tabSize={2}
+              onChange={this._setPrepare}
+              editorProps={{$blockScrolling: true}}
+              value={this._prepare}
+            />
           </td>
         </tr>
         <tr className={this.props.active ? 'content active' : 'content'}>
@@ -55,7 +85,16 @@ class AttackBuilder extends Component {
             </p>
           </td>
           <td>
-            <textarea id="attack-execute-ta" className='attack-ta' defaultValue={`function(params){\n  params.time = new Date()\n  socket.emit("result", {\n    success: true,\n    message: "Successfully executed attack",\n    params\n  });\n}`}></textarea>
+            <AceEditor
+              mode="javascript"
+              theme="monokai"
+              name="attack-execute-ta"
+              height='300px'
+              onChange={this._setExecute}
+              tabSize={2}
+              editorProps={{$blockScrolling: true}}
+              value={this._execute}
+            />
           </td>
         </tr>
         <tr className={this.props.active ? 'content active' : 'content'}>
@@ -68,7 +107,16 @@ class AttackBuilder extends Component {
             </p>
           </td>
           <td>
-            <textarea id="attack-followup-ta" className='attack-ta' defaultValue={`function(params, logger){\n  logger("Successfully pwnd victim at " + params.time);\n}`}></textarea>
+            <AceEditor
+              mode="javascript"
+              theme="monokai"
+              name="attack-execute-ta"
+              height='300px'
+              onChange={this._setFollowup}
+              tabSize={2}
+              editorProps={{$blockScrolling: true}}
+              value={this._followup}
+            />
           </td>
         </tr>
         <tr className={this.props.active ? 'content active' : 'content'}>
