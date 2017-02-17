@@ -49,7 +49,7 @@ module.exports.attackUser = function (data) {
   // console.log("received instructions to use attack " + data.attack + " on " + data.userSocket);
   server.ioVictim.to(data.userSocket).emit('execute', {
     func: `var attack = ${data.attack.toString()}`,
-    inputs: data.inputs
+    params: data.params
   });
 };
 

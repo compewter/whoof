@@ -19,7 +19,17 @@ const Attack = db.define('Attack', {
     allowNull: false
   },
 
-  constructor: {
+  prepare: {
+    type: Sequelize.STRING,
+    allowNull: false
+  },
+
+  execute: {
+    type: Sequelize.STRING,
+    allowNull: false
+  },
+
+  followup: {
     type: Sequelize.STRING,
     allowNull: false
   },

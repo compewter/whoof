@@ -1,5 +1,5 @@
 # VeAL
-VeAL is a younger leaner take on BeEF. 
+VeAL is a younger leaner take on BeEF.
 
 VeAL uses Node/Express server-side, with React/Redux on the client-side.
 

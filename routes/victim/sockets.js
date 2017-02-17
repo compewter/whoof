@@ -63,7 +63,7 @@ module.exports.disconnect = function(socket){
   })
 
   //remove socket from active sockets array
-  module.exports.sockets = module.exports.sockets.filter((id)=>{
-    return id !== socket.id
+  module.exports.sockets = module.exports.sockets.filter((sckt)=>{
+    return sckt.socketId !== socket.id
   })
 }

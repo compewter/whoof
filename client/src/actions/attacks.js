@@ -14,10 +14,9 @@ export const toggleActiveAttack = (attack) => {
   };
 }
 
-export const updateActiveAttackInput = (input, value) => {
+export const updateActiveAttackInput = (input) => {
   return {
     type: types.UPDATE_ACTIVE_ATTACK_INPUT,
-    input,
-    value
+    input
   };
 }

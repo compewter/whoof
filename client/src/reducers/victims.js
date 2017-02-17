@@ -12,10 +12,12 @@ export default (state = {}, action) => {
     case types.REMOVE_VICTIM:
       let victimsBySocketIdMap = Object.assign({}, state.victimsBySocketIdMap)
       delete victimsBySocketIdMap[action.victim.socketId]
-      console.log(action, victimsBySocketIdMap)
       return Object.assign({}, state, {
         victims: state.victims.filter((victim)=>{
           return victim.id !== action.victim.id
+        }),
+        activeTargets: Object.assign({}, state.activeTargets, {
+          [action.victim.id]: null
         }),
         victimsBySocketIdMap
       });

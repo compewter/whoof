@@ -15,7 +15,8 @@ export default (state = {}, action) => {
       });
     case types.UPDATE_ACTIVE_ATTACK_INPUT:
       let newInputs = state.activeAttack.inputs
-      newInputs[action.input].value = action.value
+      newInputs[action.input.name].value = action.input.value
+      newInputs[action.input.name].valid = action.input.valid
       return Object.assign({}, state, {
         activeAttack: Object.assign({}, state.activeAttack, {
           inputs: newInputs
