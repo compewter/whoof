@@ -15,9 +15,7 @@ class App extends Component {
       <div className='App'>
         <div className='ui container'>
           <Victims socket={this._socket}/>
-          <div className="ui section divider"></div>
           <Attacks socket={this._socket}/>
-          <div className="ui section divider"></div>
           <Terminal />
         </div>
       </div>

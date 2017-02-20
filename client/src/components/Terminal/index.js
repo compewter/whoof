@@ -23,7 +23,9 @@ class Terminal extends Component {
 
   render() {
     return (
-      <div id='terminal'></div>
+      <div className="block">
+        <div id="terminal"></div>
+      </div>
     )
   }
 }

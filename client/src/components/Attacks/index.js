@@ -9,7 +9,8 @@ import AttackBuilder from './AttackBuilder'
 
 
 class Attacks extends Component {
-  componentDidMount() {
+  componentWillMount() {
+    this.props.actions.setPendingAttackEdits(this.props.exampleAttack)
     this._socket = this.props.socket
 
     this._socket.on('attacks', this._attacksReceived)
@@ -26,6 +27,7 @@ class Attacks extends Component {
 
   _executeAttack = (attack)=>{
     try{
+      console.log(attack)
       let activeTargetSocketIds = utils.objToArrayOfValues(this.props.activeTargets, 'socketId')
       if(activeTargetSocketIds.length === 0){
         this.props.logger(`No active targets. Select a target.`)
@@ -35,7 +37,7 @@ class Attacks extends Component {
 
 
       let attackPrep, attackExecute, attackFollowup
-      eval(`attackPrep = ${attack.prepare}; attackExecute = ${attack.execute}; attackFollowup = ${attack.followup};`)
+      eval(`attackPrep = ${attack.prepare.function}; attackExecute = ${attack.execute.function}; attackFollowup = ${attack.followup.function};`)
       if(!this._isValidAttackFunction(attackPrep, 'prep') || !this._isValidAttackFunction(attackExecute, 'execute') || !this._isValidAttackFunction(attackFollowup, 'followup')){
         this.props.logger(`Attack "${attack.name}" failed execution instruction validation.`)
         return
@@ -43,7 +45,11 @@ class Attacks extends Component {
       this.props.logger('Attack instructions are valid...')
 
 
-      let params = attackPrep(utils.getObjValues(attack.inputs), this.props.logger)
+      let inputs = {}
+      for (var name in attack.inputs){
+        inputs[name] = attack.inputs[name].value
+      }
+      let params = attackPrep(inputs, this.props.logger)
       activeTargetSocketIds.forEach((socketId)=>{
         this.props.logger(`Executing attack "${attack.name}" on ${this.props.victimsBySocketIdMap[socketId].id}...`)
         let attackInstanceId = `${socketId}_${new Date().valueOf()}`
@@ -81,56 +87,52 @@ class Attacks extends Component {
   }
 
   render(){
+    let {attacks, activeAttack, exampleAttack, actions, logger} = this.props
     return (
-      <table className='ui accordion selectable large table'>
-        <thead>
-          <tr>
-            <th colSpan='5'>
-              <h3>Attacks</h3>
-            </th>
-          </tr>
-          <tr>
-            <th>Name</th>
-            <th className='ten wide'>Description</th>
-          </tr>
-        </thead>
-        {
-          this.props.attacks.map((attack, idx) => (
-            <Attack 
-              attack={attack}
-              key={`attack_${idx}`}
-              index={idx}
-              active={this.props.activeAttack.id === attack.id}
-              toggleActive={this.props.actions.toggleActiveAttack}
-              updateInput={this.props.actions.updateActiveAttackInput}
-              execute={this._executeAttack}
-            />
-          ))
-        }
-        <AttackBuilder 
-          key={`attack_builder`}
-          active={this.props.activeAttack.id === 'builder'}
-          logger={this.props.logger}
-          toggleActive={this.props.actions.toggleActiveAttack}
-          updateInput={this.props.actions.updateActiveAttackInput}
-          execute={this._executeAttack}
-        />
-      </table>
+      <div className='block'>
+        <h3 className='ui dividing header'>Attacks</h3>
+        <div className='ui accordion segments'>
+          {
+            attacks.map((attack, idx) => (
+              <Attack 
+                defaultAttack={attack}
+                activeAttack={activeAttack}
+                key={`attack_${idx}`}
+                index={idx}
+                active={activeAttack.id === attack.id}
+                toggleActive={actions.toggleActiveAttack}
+                updateInput={actions.updateActiveAttackInput}
+                execute={this._executeAttack}
+              />
+            ))
+          }
+          <AttackBuilder 
+            update={actions.setPendingAttackEdits}
+            attack={exampleAttack.pending}
+            key={`attack_builder`}
+            active={activeAttack.id === 'builder'}
+            logger={logger}
+            toggleActive={actions.toggleActiveAttack}
+            execute={this._executeAttack}
+          />
+        </div>
+      </div>
     )
   }
 }
 
 Attacks.propTypes = {
-  attacks: PropTypes.array,
-  activeAttack: PropTypes.object,
-  activeTargets: PropTypes.object,
+  attacks: PropTypes.array.isRequired,
+  activeAttack: PropTypes.object.isRequired,
+  activeTargets: PropTypes.object.isRequired,
   victimsBySocketIdMap: PropTypes.object,
-  logger: PropTypes.func 
+  logger: PropTypes.func.isRequired
 }
 
 function mapStateToProps(state, props) {
   return {
     attacks: state.attacks.attacks,
+    exampleAttack: state.attacks.exampleAttack,
     activeAttack: state.attacks.activeAttack,
     activeTargets: state.victims.activeTargets,
     victimsBySocketIdMap: state.victims.victimsBySocketIdMap,

@@ -16,37 +16,35 @@ class Victims extends Component {
 
   render() {
     return (
-      <table className='ui structured large table'>
-        <thead>
-          <tr>
-            <th colSpan='5'>
-              <h3>Victims</h3>
-            </th>
-          </tr>
-          <tr>
-            <th>ID</th>
-            <th>IP</th>
-            <th className='eight wide'>Agent</th>
-            <th>Time Connected</th>
-          </tr>
-        </thead>
-        <tbody>
-          {
-            this.props.victims.map((victim, idx) => (
-              <tr
-                key={idx}
-                onClick={() => this.props.actions.targetVictim(victim)}
-                className={this.props.activeTargets[victim.id] ? 'active' : ''}
-              >
-                <td>{victim.id}</td>
-                <td>{victim.ip}</td>
-                <td>{victim.agent}</td>
-                <td>{new Date(victim.connectedAt).toLocaleString()}</td>
-              </tr>
-            ))
-          }
-        </tbody>
-      </table>
+      <div className="block">
+        <h3 className="ui dividing header">Victims</h3>
+        <table className='ui structured large table'>
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>IP</th>
+              <th className='eight wide'>Agent</th>
+              <th>Time Connected</th>
+            </tr>
+          </thead>
+          <tbody>
+            {
+              this.props.victims.map((victim, idx) => (
+                <tr
+                  key={idx}
+                  onClick={() => this.props.actions.targetVictim(victim)}
+                  className={this.props.activeTargets[victim.id] ? 'active' : ''}
+                >
+                  <td>{victim.id}</td>
+                  <td>{victim.ip}</td>
+                  <td>{victim.agent}</td>
+                  <td>{new Date(victim.connectedAt).toLocaleString()}</td>
+                </tr>
+              ))
+            }
+          </tbody>
+        </table>
+      </div>
     )
   }
 }

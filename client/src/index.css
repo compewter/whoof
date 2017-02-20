@@ -8,6 +8,6 @@ body {
   margin-top: 7em;
 }
 
-#food-search {
-  margin-top: 5em;
+.block{
+  margin: 2em 0;  
 }

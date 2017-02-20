@@ -1,7 +1,7 @@
 const Sequelize = require('sequelize');
-const db = require('../')
+const sequelize = require('../')
 
-const Attack = db.define('Attack', {
+const Attack = sequelize.define('Attack', {
   id: { 
     type: Sequelize.INTEGER, 
     autoIncrement: true,
@@ -30,6 +30,21 @@ const Attack = db.define('Attack', {
   },
 
   followup: {
+    type: Sequelize.STRING,
+    allowNull: false
+  },
+
+  prepare_description: {
+    type: Sequelize.STRING,
+    allowNull: false
+  },
+
+  execute_description: {
+    type: Sequelize.STRING,
+    allowNull: false
+  },
+
+  followup_description: {
     type: Sequelize.STRING,
     allowNull: false
   },

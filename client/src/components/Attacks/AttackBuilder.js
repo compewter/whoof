@@ -1,120 +1,200 @@
 import React, {Component, PropTypes} from 'react'
 import AceEditor from 'react-ace'
+import AttackInputs from './AttackInputs'
 import 'brace/mode/java';
 import 'brace/theme/monokai';
 
 class AttackBuilder extends Component {
-  componentWillMount() {
-    this._functionDefaults = [
-      {
-        name: 'prepare',
-        description: [
-          'This function is used to programatically prepare any data for the execute function.',
-          'Add any data you need to the params object.',
-          'User inputs are attached to the params argument.',
-          'The logger argument is provided for printing information.',
-          'You must return the params object.'
-        ],
-        defaultValue: `function prepare(params, logger){\n  logger("Preparing custom attack...");\n  return params;\n}`
-      },
-      {
-        name: 'execute',
-        description: [
-          'This function is executed in the victim\'s browser.',
-          'The params argument is configured in the prepare function.',
-          'If you do not emit a result with the victim\'s socket the attacker\'s console will not know the status of the executed function- e.g.,',
-          'socket.emit("result", {',
-          '  success: true',
-          '  message: "Successfully executed attack",',
-          '  params: params',
-          '});'
-        ],
-        defaultValue: `function execute(params){\n  params.time = new Date();\n  socket.emit("result", {\n    success: true,\n    message: "Successfully executed attack",\n    params\n  });\n}`
-      },
-      {
-        name: 'followup',
-        description: [
-          'This function is executed on the attackers side when the victim\'s socket emits a result.',
-          'The params argument is the one returned by the attack execute function.'
-        ],
-        defaultValue: `function followup(params, logger){\n  logger("Successfully pwnd victim at " + params.time);\n}`
-      }
-    ]
+  _execute = ()=>{
+    let {attack, execute} = this.props
+    for (var name in attack.inputs){
+      attack.inputs[name].value = attack.inputs[name].defaultValue
+    }
+    execute(attack)
   }
 
-  _buildAttack = () => {
-    this.props.logger('Building custom attack...')
-    let attack = {
-      prepare: this._prepare,
-      execute: this._execute,
-      followup: this._followup,
-      inputs: {},
-      name: 'custom'
+  _update = (field, inputName, value)=>{
+    let {attack, logger, update} = this.props
+    let tempAttack = Object.assign({}, attack)
+    if(field === 'name'){
+      if(!tempAttack.inputs[value]){
+        tempAttack.inputs[value] = tempAttack.inputs[inputName]
+        tempAttack.inputs[value][field] = value
+        delete tempAttack.inputs[inputName]
+      }else if(inputName !== value){
+        logger('input name already used')
+      }
+    }else{
+      tempAttack.inputs[inputName][field] = value
     }
-    this.props.execute(attack)
+    update(tempAttack)
+  }
+
+  _delete = (inputName)=>{
+    let {attack, update} = this.props
+    let tempAttack = Object.assign({}, attack)
+    delete tempAttack.inputs[inputName]
+    update(tempAttack)
+  }
+
+  _saveAttack = ()=>{
+    console.log(this.props.attack)
   }
 
   render(){
+    let { attack, active, toggleActive, update } = this.props
+    let inputs = Object.values(attack.inputs).map((input) => (
+      <AttackInputs
+        key={`input_${attack.name}_${input.name}`}
+        input={input}
+        inputFields={[
+          {label:'Name', key:'name'},
+          {label:'Description', key:'description'},
+          {label:'HTML Type', key:'type'},
+          {label:'Default Value', key:'defaultValue'}
+        ]}
+        del={this._delete}
+        update={this._update}
+      />
+    ))
+
     return(
-      <tbody>
-        <tr
-          onClick={() => {this.props.toggleActive({id: 'builder'})}}
-          className={this.props.active ? 'title active' : 'title'}
+      <div className="ui segment">
+        <div
+          onClick={() => {toggleActive({id: 'builder'})}}
+          className={`ui grid title ${active ? 'active' : ''}`}
         >
-          <td>Attack Builder</td>
-          <td>Build a custom attack</td>
-        </tr>
+          <div className='four wide column'>
+            <h4>Attack Builder</h4>
+          </div>
+          <div className='twelve wide column'>
+            <span>Build a new attack</span>
+          </div>
+        </div>
 
-        {this._functionDefaults.map((options)=>{
-          this[`_${options.name}`] = options.defaultValue
-          return (<tr className={this.props.active ? 'content active' : 'content'} key={`ab_${options.name}`}>
-            <td>
-              <h5 className="description-header">{options.name}:</h5>
-              <br></br>
-              <p>
-                {options.description.map((line, idx)=>{
-                  return <span key={`${options.name}_desc_${idx}`}>{line}<br></br></span>
-                })}
-              </p>
-            </td>
-            <td>
-              <AceEditor
-                mode="javascript"
-                theme="monokai"
-                name="attack-prep-ta"
-                height='300px'
-                tabSize={2}
-                onChange={(newValue)=>{
-                  this[`_${options.name}`] = newValue
+        <div className={`ui content segment secondary segments ${active ? 'active' : ''}`}>
+          <div className={`ui secondary segment grid ${active ? 'active' : ''}`}>
+            <div className='six wide column'>
+              <h5>Describe:</h5>
+              <p>Set a name and brief description of this attack</p>
+            </div>
+
+            <div className="ten wide column grid">
+              <div className="row" style={{paddingBottom: "1em"}}>
+                <div className="ui labeled input">
+                  <div className="ui label">
+                    Name
+                  </div>
+                  <input
+                    type="text"
+                    defaultValue={attack.name}
+                    onBlur={(event)=>{
+                      let newValue = event.target.value
+                      let tempAttack = Object.assign({}, attack)
+                      tempAttack.name = newValue
+                      update(tempAttack)
+                    }}
+                  />
+                </div>
+              </div>
+              <div className="row">
+                <div className="ui labeled input">
+                  <div className="ui label">
+                    Description
+                  </div>
+                  <textarea
+                    type="text"
+                    defaultValue={attack.description}
+                    style={{width: "400px", height: "50px"}}
+                    onBlur={(event)=>{
+                      let newValue = event.target.value
+                      let tempAttack = Object.assign({}, attack)
+                      tempAttack.description = newValue
+                      update(tempAttack)
+                    }}
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className={`ui secondary segment grid ${active ? 'active' : ''}`}>
+            <div className='six wide column'>
+              <h5>Inputs:</h5>
+              <p>User inputs to be set before launching an attack</p>
+            </div>
+            <div id="ab-inputs" className='ten wide column center aligned'>
+              {inputs}
+              <button
+                className="compact circular ui icon button"
+                onClick={()=>{
+                  let tempAttack = Object.assign({}, attack)
+                  if(!tempAttack.inputs['']){
+                    tempAttack.inputs[''] = {
+                      name: '',
+                      defaultValue: ''
+                    }
+                    update(tempAttack)
+                  }
                 }}
-                editorProps={{$blockScrolling: true}}
-                value={this[`_${options.name}`]}
-              />
-            </td>
-          </tr>)
-        })}
+              ><i className="add circle icon"></i></button>
+            </div>
+          </div>
 
-        <tr className={this.props.active ? 'content active' : 'content'}>
-          <td colSpan="2">
-            <button 
-              onClick={this._buildAttack}
-              disabled={false}
-            >Execute</button>
-          </td>
-        </tr>
-      </tbody>
+          {[attack.prepare, attack.execute, attack.followup].map((attackFunction)=>{
+            return (
+              <div key={`ab_${attackFunction.name}`} className={`ui secondary segment grid content ${active ? 'active' : ''}`} >
+                <div className='six wide column'>
+                  <h5 className="capitalize">{attackFunction.name}:</h5>
+                  <br></br>
+                  <p>{attackFunction.description}</p>
+                </div>
+                <div className='ten wide column'>
+                  <AceEditor
+                    mode="javascript"
+                    theme="monokai"
+                    name="attack-prep-ta"
+                    height='300px'
+                    width='600px'
+                    tabSize={2}
+                    onChange={(newValue)=>{
+                      let tempAttack = Object.assign({}, attack)
+                      tempAttack[attackFunction.name].function = newValue
+                      update(tempAttack)
+                    }}
+                    editorProps={{$blockScrolling: true}}
+                    value={attackFunction.function}
+                  />
+                </div>
+              </div>
+            )
+          })}
+
+          <div className={active ? 'content active' : 'content'}>
+            <div colSpan="2">
+              <button
+                className="ui icon button"
+                onClick={this._execute}
+              ><i className="bomb icon"></i></button>
+              <button
+                className="ui icon button"
+                onClick={this._saveAttack}
+              ><i className="save icon"></i></button>
+            </div>
+          </div>
+        </div>
+      </div>
     )
   }
 }
 
 AttackBuilder.propTypes = {
-  index: PropTypes.number,
-  active: PropTypes.bool,
-  attack: PropTypes.object,
-  toggleActive: PropTypes.func,
-  updateInput: PropTypes.func,
-  execute: PropTypes.func,
-  logger: PropTypes.func
+  active: PropTypes.bool.isRequired,
+  attack: PropTypes.object.isRequired,
+  toggleActive: PropTypes.func.isRequired,
+  update: PropTypes.func.isRequired,
+  execute: PropTypes.func.isRequired,
+  logger: PropTypes.func.isRequired
 }
 
 export default AttackBuilder

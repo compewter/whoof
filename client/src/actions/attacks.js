@@ -20,3 +20,10 @@ export const updateActiveAttackInput = (input) => {
     input
   };
 }
+
+export const setPendingAttackEdits = (attack) => {
+  return {
+    type: types.SET_PENDING_ATTACK_EDITS,
+    attack
+  };
+}

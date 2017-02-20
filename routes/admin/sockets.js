@@ -37,7 +37,7 @@ module.exports.getUsers = function () {
 
 module.exports.getAttacks = function () {
   attack.findAll((attacks)=>{
-    module.exports.emit('attacks', attacks);
+    module.exports.emit('attacks', assembleAttacks(attacks));
   })
 };
 
@@ -56,4 +56,28 @@ module.exports.attackUser = function (data) {
 module.exports.emit = ()=>{
   //need to define the emit function to prevent errors when a victim connects before an admin
   console.log('No admins connected')
+}
+
+function assembleAttacks(attacks){
+  return attacks.map((attack)=>{
+    let assembledAttack = ['prepare','execute','followup'].reduce((pv, type)=>{
+      pv[type] = {
+        name: type,
+        description: attack[`${type}_description`],
+        function: attack[`${type}`]
+      }
+      return pv
+    },{})
+    //attack is a sequelize instance so we need to deconstruct the values from it
+    let {id, name, description, inputs, created_at, updated_at} = attack
+    return {
+      id,
+      name,
+      description,
+      inputs: JSON.parse(inputs),
+      created_at,
+      updated_at,
+      ...assembledAttack
+    }
+  })
 }
