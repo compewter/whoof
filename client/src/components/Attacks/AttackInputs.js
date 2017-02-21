@@ -37,7 +37,10 @@ class AttackInputs extends Component {
 }
 
 AttackInputs.propTypes = {
-
+  input: PropTypes.object,
+  inputFields: PropTypes.array,
+  update: PropTypes.func,
+  del: PropTypes.func
 }
 
 export default AttackInputs

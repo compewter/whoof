@@ -2,7 +2,7 @@ import React, {Component, PropTypes} from 'react'
 
 class Attack extends Component {
   render(){
-    let { defaultAttack, activeAttack, toggleActive, active, index, updateInput, execute } = this.props
+    let { active, activeAttack, defaultAttack, execute, index, toggleActive, toggleEdit, updateInput } = this.props
     return(
       <div className='ui segment'>
         <div
@@ -48,6 +48,10 @@ class Attack extends Component {
               disabled={activeAttack.inputs && Object.values(activeAttack.inputs).some((input)=>{return !input.valid})}
               onClick={()=>{execute(activeAttack)}}
             ><i className="bomb icon"></i></button>
+            <button
+              className="ui icon grey button"
+              onClick={()=>{toggleEdit(activeAttack)}}
+            ><i className="edit icon"></i></button>
           </div>
         </div>
       </div>
@@ -61,6 +65,7 @@ Attack.propTypes = {
   defaultAttack: PropTypes.object.isRequired,
   activeAttack: PropTypes.object,
   toggleActive: PropTypes.func.isRequired,
+  toggleEdit: PropTypes.func.isRequired,
   updateInput: PropTypes.func.isRequired,
   execute: PropTypes.func.isRequired
 }

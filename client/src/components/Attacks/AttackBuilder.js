@@ -7,13 +7,13 @@ import 'brace/theme/monokai';
 class AttackBuilder extends Component {
   _execute = ()=>{
     let {attack, execute} = this.props
-    for (var name in attack.inputs){
-      attack.inputs[name].value = attack.inputs[name].defaultValue
-    }
+    Object.keys(attack.inputs).forEach((name)=>{
+      attack.inputs[name].value = attack.inputs[name].defaultValue        
+    })
     execute(attack)
   }
 
-  _update = (field, inputName, value)=>{
+  _updateInput = (field, inputName, value)=>{
     let {attack, logger, update} = this.props
     let tempAttack = Object.assign({}, attack)
     if(field === 'name'){
@@ -30,15 +30,19 @@ class AttackBuilder extends Component {
     update(tempAttack)
   }
 
-  _delete = (inputName)=>{
+  _delete = ()=>{
+    this.props.delete(this.props.attack.id)
+  }
+
+  _deleteInput = (inputName)=>{
     let {attack, update} = this.props
     let tempAttack = Object.assign({}, attack)
     delete tempAttack.inputs[inputName]
     update(tempAttack)
   }
 
-  _saveAttack = ()=>{
-    console.log(this.props.attack)
+  _save = ()=>{
+    this.props.save(this.props.attack)
   }
 
   render(){
@@ -53,8 +57,8 @@ class AttackBuilder extends Component {
           {label:'HTML Type', key:'type'},
           {label:'Default Value', key:'defaultValue'}
         ]}
-        del={this._delete}
-        update={this._update}
+        del={this._deleteInput}
+        update={this._updateInput}
       />
     ))
 
@@ -65,10 +69,10 @@ class AttackBuilder extends Component {
           className={`ui grid title ${active ? 'active' : ''}`}
         >
           <div className='four wide column'>
-            <h4>Attack Builder</h4>
+            <h4 className='capitalize'>{attack.id === 'builder' ? 'Attack Builder' : attack.name}</h4>
           </div>
           <div className='twelve wide column'>
-            <span>Build a new attack</span>
+            <span>{attack.id === 'builder' ? 'Template for building a new attack.' : attack.description}</span>
           </div>
         </div>
 
@@ -178,8 +182,16 @@ class AttackBuilder extends Component {
               ><i className="bomb icon"></i></button>
               <button
                 className="ui icon button"
-                onClick={this._saveAttack}
+                onClick={this._save}
               ><i className="save icon"></i></button>
+              {
+                attack.id !== 'builder' ?
+                <div
+                  className="ui icon button"
+                  data-tooltip="Delete this attack"
+                  onClick={this._delete}
+                ><i className="ban icon"></i></div>
+              :''}
             </div>
           </div>
         </div>
@@ -193,6 +205,7 @@ AttackBuilder.propTypes = {
   attack: PropTypes.object.isRequired,
   toggleActive: PropTypes.func.isRequired,
   update: PropTypes.func.isRequired,
+  delete: PropTypes.func.isRequired,
   execute: PropTypes.func.isRequired,
   logger: PropTypes.func.isRequired
 }

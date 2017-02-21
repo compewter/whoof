@@ -1,30 +1,62 @@
-const models = require('../models');
+const models = require('../models')
 
 module.exports.findByName = function(name, cb) {
   models.Attack.findOne({where : {name: name}}).then(function(attack) {
-    console.log("found", attack);
     if(err){
-      console.log(err);
-      cb(err);
+      console.log(err)
+      cb(err)
     }else{
-      cb(attack);
+      cb(attack)
     }
-  });
-};
+  })
+}
 
-module.exports.add = function(newAttackOptions, cb) {
-  models.Attack.create(newAttackOptions).then(function(newAttack){
-    if(err){
-      console.log(err);
-      cb(err);
-    }else{
-      cb(newAttack);
-    }
-  });
-};
+module.exports.save = function(attackToAdd) {
+  return new Promise((resolve, reject)=>{
+    models.Attack[attackToAdd.id === '' ? 'create' : 'update'](attackToAdd, {where: {id: attackToAdd.id}}).then((addedAttack)=>{
+      models.Attack.sync().then(()=>{
+        resolve(addedAttack)
+      })
+    })
+    .catch((err)=>{
+      console.log(err)
+      reject(err)
+    })
+  })
+}
+
+module.exports.deleteById = function(attackId) {
+  return new Promise((resolve, reject)=>{
+    models.Attack.destroy({where: {id: attackId}}).then((count)=>{
+      models.Attack.sync().then(()=>{
+        resolve(count)
+      })
+    })
+    .catch((err)=>{
+      console.log(err)
+      reject(err)
+    })
+  })
+}
 
 module.exports.findAll = function(cb) {
   models.Attack.findAll().then(function(attacks){
-    cb(attacks);
-  });
-};
+    cb(attacks)
+  })
+}
+
+
+module.exports.translateForDB = (attack)=>{
+  let {id, name, description, inputs, prepare, execute, followup} = attack
+  return {
+    id: id === 'builder' ? '' : id,
+    name: name.toLowerCase(),
+    description,
+    inputs,
+    ...[prepare, execute, followup].reduce((pv, func)=>{
+      pv[func.name] = func.function
+      pv[`${func.name}_description`] = func.description
+      return pv
+    },{})    
+  }
+}

@@ -23,11 +23,11 @@ class Attacks extends Component {
   _attacksReceived = (attacks)=>{
     console.log(attacks)
     this.props.actions.setAttacks(attacks)
+    this.props.actions.toggleActiveAttack(this.props.activeAttack)
   }
 
   _executeAttack = (attack)=>{
     try{
-      console.log(attack)
       let activeTargetSocketIds = utils.objToArrayOfValues(this.props.activeTargets, 'socketId')
       if(activeTargetSocketIds.length === 0){
         this.props.logger(`No active targets. Select a target.`)
@@ -46,9 +46,9 @@ class Attacks extends Component {
 
 
       let inputs = {}
-      for (var name in attack.inputs){
-        inputs[name] = attack.inputs[name].value
-      }
+      Object.keys(attack.inputs).forEach((name)=>{
+        inputs[name] = attack.inputs[name].value        
+      })
       let params = attackPrep(inputs, this.props.logger)
       activeTargetSocketIds.forEach((socketId)=>{
         this.props.logger(`Executing attack "${attack.name}" on ${this.props.victimsBySocketIdMap[socketId].id}...`)
@@ -64,6 +64,14 @@ class Attacks extends Component {
       this.props.logger('Error executing attack.')
       this.props.logger(e)
     }
+  }
+
+  _saveAttack = (attack)=>{
+    this._socket.emit('saveAttack', attack)
+  }
+
+  _deleteAttack = (attackId)=>{
+    this._socket.emit('deleteAttack', attackId)
   }
 
   _isValidAttackFunction = (attackFunction, type)=>{
@@ -93,27 +101,47 @@ class Attacks extends Component {
         <h3 className='ui dividing header'>Attacks</h3>
         <div className='ui accordion segments'>
           {
-            attacks.map((attack, idx) => (
-              <Attack 
-                defaultAttack={attack}
-                activeAttack={activeAttack}
-                key={`attack_${idx}`}
-                index={idx}
-                active={activeAttack.id === attack.id}
-                toggleActive={actions.toggleActiveAttack}
-                updateInput={actions.updateActiveAttackInput}
-                execute={this._executeAttack}
-              />
-            ))
+            attacks.map((attack, idx) => {
+              if(activeAttack.id === attack.id && activeAttack.editing){
+                return (
+                  <AttackBuilder 
+                    active={activeAttack.id === attack.id}
+                    attack={attack.pending}
+                    delete={this._deleteAttack}
+                    execute={this._executeAttack}
+                    key={`attack_${idx}`}
+                    logger={logger}
+                    save={this._saveAttack}
+                    toggleActive={actions.toggleActiveAttack}
+                    toggleEdit={actions.toggleEditAttack}
+                    update={actions.setPendingAttackEdits}
+                  />
+                )
+              }
+              return (
+                 <Attack
+                  active={activeAttack.id === attack.id}
+                  activeAttack={activeAttack}
+                  defaultAttack={attack}
+                  execute={this._executeAttack}
+                  index={idx}
+                  key={`attack_${idx}`}
+                  toggleActive={actions.toggleActiveAttack}
+                  toggleEdit={actions.toggleEditAttack}
+                  updateInput={actions.updateActiveAttackInput}
+                />)
+            })
           }
           <AttackBuilder 
-            update={actions.setPendingAttackEdits}
-            attack={exampleAttack.pending}
-            key={`attack_builder`}
             active={activeAttack.id === 'builder'}
-            logger={logger}
-            toggleActive={actions.toggleActiveAttack}
+            attack={exampleAttack.pending}
+            delete={()=>{}}
             execute={this._executeAttack}
+            key={`attack_builder`}
+            logger={logger}
+            save={this._saveAttack}
+            toggleActive={actions.toggleActiveAttack}
+            update={actions.setPendingAttackEdits}
           />
         </div>
       </div>

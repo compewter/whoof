@@ -10,7 +10,7 @@ export default {
     },
     exampleAttack: {
       id: 'builder',
-      name: 'new',
+      name: 'Attack Builder',
       description: 'Template for building a new attack.',
       'inputs': {
         'example input name':{

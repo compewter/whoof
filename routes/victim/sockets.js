@@ -20,7 +20,7 @@ module.exports.listen = function(app){
     socket.join('users')
     
     //on new user connection, send info to admin
-    const newUser = module.exports.buildNewUser(socket)
+    const newUser = buildNewUser(socket)
     adminSocket.emit('newUser', newUser)
 
     module.exports.sockets.push(newUser)
@@ -32,7 +32,7 @@ module.exports.listen = function(app){
 
     //when user disconnects, let admin know
     socket.on('disconnect', function(){
-      module.exports.disconnect(socket)
+      disconnect(socket)
       console.log("user disconnected")
     })
 
@@ -41,7 +41,7 @@ module.exports.listen = function(app){
   return io
 }
 
-module.exports.buildNewUser = function(socket){
+function buildNewUser(socket){
 
   const clientIp = socket.handshake.address
   const clientAgent = socket.handshake.headers['user-agent']
@@ -56,7 +56,7 @@ module.exports.buildNewUser = function(socket){
   }
 }
 
-module.exports.disconnect = function(socket){
+function disconnect(socket){
   adminSocket.emit('userLeft', {
     id: socket._id,
     socketId: socket.id

@@ -7,9 +7,23 @@ export const setAttacks = (attacks) => {
   };
 }
 
+export const setPendingAttackEdits = (attack) => {
+  return {
+    type: types.SET_PENDING_ATTACK_EDITS,
+    attack
+  };
+}
+
 export const toggleActiveAttack = (attack) => {
   return {
     type: types.TOGGLE_ACTIVE_ATTACK,
+    attack
+  };
+}
+
+export const toggleEditAttack = (attack) => {
+  return {
+    type: types.TOGGLE_EDIT_ATTACK,
     attack
   };
 }
@@ -18,12 +32,5 @@ export const updateActiveAttackInput = (input) => {
   return {
     type: types.UPDATE_ACTIVE_ATTACK_INPUT,
     input
-  };
-}
-
-export const setPendingAttackEdits = (attack) => {
-  return {
-    type: types.SET_PENDING_ATTACK_EDITS,
-    attack
   };
 }

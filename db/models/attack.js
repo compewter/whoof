@@ -57,18 +57,4 @@ const Attack = sequelize.define('Attack', {
 
 Attack.sync();
 
-// Attack.sync({force: true}).then(function(){
-//  Attack.create({
-//    name: "test",
-//    description: "Sample attack module",
-//    pathToAttack: "attacks/test.js",
-//    inputs: {
-//       input1: 'default value',
-//       input2: '',
-//       input3: ''
-//     },
-//      followup: 1
-//  });
-// });
-
 module.exports = Attack;
