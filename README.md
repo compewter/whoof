@@ -3,7 +3,7 @@ VeAL is a younger leaner take on BeEF.
 
 VeAL uses Node/Express server-side, with React/Redux on the client-side.
 
-Hooked browsers are managed via WebSockets instead of long polling used in BeEF.
+Hooked browsers are managed via WebSockets.
 
 ```sh
 $ cd /path/to/repo
