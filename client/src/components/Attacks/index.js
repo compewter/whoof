@@ -21,7 +21,6 @@ class Attacks extends Component {
   }
 
   _attacksReceived = (attacks)=>{
-    console.log(attacks)
     this.props.actions.setAttacks(attacks)
     this.props.actions.toggleActiveAttack(this.props.activeAttack)
   }

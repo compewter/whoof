@@ -8,6 +8,14 @@ import Terminal from './components/Terminal';
 class App extends Component {
   componentWillMount(){
     this._socket = io()
+    Notification.requestPermission()
+      .then((permission)=>{
+        if(permission === 'granted'){
+          this._socket.on('notify', function(data){
+            new Notification(data.title, data.options)
+          })
+        }
+      })
   }
 
   render(){
