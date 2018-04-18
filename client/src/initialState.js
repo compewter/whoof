@@ -50,7 +50,8 @@ export default {
           name: 'followup'
         }
       }
-    }
+    },
+    followupBuffer: {}
   },
   terminal: {
     logger: console.log

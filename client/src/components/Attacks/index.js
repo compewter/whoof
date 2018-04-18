@@ -17,7 +17,6 @@ class Attacks extends Component {
     this._socket.on('result', this._resultReceived)
     
     this._socket.emit('getAttacks')
-    this._followupBuffer = {}
   }
 
   _attacksReceived = (attacks)=>{
@@ -56,7 +55,7 @@ class Attacks extends Component {
       activeTargetSocketIds.forEach((socketId)=>{
         this.props.logger(`Executing attack "${attack.name}" on ${this.props.victimsBySocketIdMap[socketId].id}...`)
         let attackInstanceId = `${socketId}_${new Date().valueOf()}`
-        this._followupBuffer[attackInstanceId] = attackFollowup
+        this.props.followupBuffer[attackInstanceId] = attackFollowup
         this._socket.emit('attackUser', {
           userSocket: socketId,
           attack: attackExecute.toString(),
@@ -94,7 +93,7 @@ class Attacks extends Component {
     let resultId = result.params.id
     this.props.logger(`Result received from victim ${this.props.victimsBySocketIdMap[resultId.slice(0, resultId.lastIndexOf('_'))].id}`)
     this.props.logger(`${result.message}`)
-    this._followupBuffer[resultId](result.params, this.props.logger)
+    this.props.followupBuffer[resultId](result.params, this.props.logger)
   }
 
   render(){
@@ -156,18 +155,21 @@ Attacks.propTypes = {
   attacks: PropTypes.array.isRequired,
   activeAttack: PropTypes.object.isRequired,
   activeTargets: PropTypes.object.isRequired,
-  victimsBySocketIdMap: PropTypes.object,
-  logger: PropTypes.func.isRequired
+  followupBuffer: PropTypes.object.isRequired,
+  logger: PropTypes.func.isRequired,
+  socket: PropTypes.object.isRequired,
+  victimsBySocketIdMap: PropTypes.object
 }
 
 function mapStateToProps(state, props) {
   return {
     attacks: state.attacks.attacks,
-    exampleAttack: state.attacks.exampleAttack,
     activeAttack: state.attacks.activeAttack,
     activeTargets: state.victims.activeTargets,
-    victimsBySocketIdMap: state.victims.victimsBySocketIdMap,
-    logger: state.terminal.logger
+    exampleAttack: state.attacks.exampleAttack,
+    followupBuffer: state.attacks.followupBuffer,
+    logger: state.terminal.logger,
+    victimsBySocketIdMap: state.victims.victimsBySocketIdMap
   }
 }
 

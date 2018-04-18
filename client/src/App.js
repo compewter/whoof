@@ -22,9 +22,9 @@ class App extends Component {
     return (
       <div className='App'>
         <div className='ui container'>
-          <Victims socket={this._socket}/>
-          <Attacks socket={this._socket}/>
-          <Terminal />
+          <Victims  socket={this._socket} />
+          <Attacks  socket={this._socket} />
+          <Terminal socket={this._socket} />
         </div>
       </div>
     )
