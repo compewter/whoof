@@ -49,6 +49,10 @@ class Attacks extends Component {
         inputs[name] = attack.inputs[name].value        
       })
       let params = attackPrep(inputs, this.props.logger)
+      if(params._cancel_attack){
+        this.props.logger('Attack cancelled')
+        return
+      }
       activeTargetSocketIds.forEach((socketId)=>{
         this.props.logger(`Executing attack "${attack.name}" on ${this.props.victimsBySocketIdMap[socketId].id}...`)
         let attackInstanceId = `${socketId}_${new Date().valueOf()}`
