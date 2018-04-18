@@ -21,6 +21,10 @@ require('./routes/victim/sockets').configure(ioVictim)
 
 process.env.VICTIM_PORT = process.env.VICTIM_PORT || 8080
 victimApp.use(victimSession)
+victimApp.use(function(req, res, next) {
+  res.setHeader("Access-Control-Allow-Origin", "*");
+  return next();
+})
 victimApp.use(express.static(__dirname + '/public'))
 victimServer.listen( process.env.VICTIM_PORT)
 console.log(`Victim socket server listening on :${process.env.VICTIM_PORT}`)
