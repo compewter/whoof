@@ -31,7 +31,9 @@ class AttackBuilder extends Component {
   }
 
   _delete = ()=>{
-    this.props.delete(this.props.attack.id)
+    if(confirm('Delete this attack?')){
+      this.props.delete(this.props.attack.id)
+    }
   }
 
   _deleteInput = (inputName)=>{
@@ -190,7 +192,7 @@ class AttackBuilder extends Component {
                   className="ui icon button"
                   data-tooltip="Delete this attack"
                   onClick={this._delete}
-                ><i className="ban icon"></i></div>
+                ><i className="trash icon"></i></div>
               :''}
             </div>
           </div>

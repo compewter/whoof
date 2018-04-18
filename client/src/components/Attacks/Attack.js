@@ -34,6 +34,7 @@ class Attack extends Component {
                     })
                   }}
                   defaultValue={input.value}
+                  style={{width:"90%"}}
                 />
               </div>
               <div className='ten wide column'>
