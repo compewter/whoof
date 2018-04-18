@@ -12,7 +12,10 @@ class Terminal extends Component {
       height: 300,
       prompt: '[VeAL ~]$ '
     })
-    this.props.actions.setLogger($.terminal.active().echo)
+    this.props.actions.setLogger(function(text){
+      let d = new Date()
+      $.terminal.active().echo(`\[${d.toLocaleTimeString()}\]: ${text}`)
+    })
   }
 
   _commandHandler(command, term) {
@@ -22,7 +25,7 @@ class Terminal extends Component {
         term.echo('Select a target first')
       }
       activeTargetSocketIds.forEach((socketId)=>{
-        term.echo(`Executing command line attack on victim ${this.props.victimsBySocketIdMap[socketId].id}...`)
+        this.props.logger(`Executing command line attack on victim ${this.props.victimsBySocketIdMap[socketId].id}...`)
         let attackInstanceId = `${socketId}_${new Date().valueOf()}`
         this.props.followupBuffer[attackInstanceId] = function(params, logger){}
         this.props.socket.emit('attackUser', {

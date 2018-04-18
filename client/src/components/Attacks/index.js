@@ -40,7 +40,7 @@ class Attacks extends Component {
         this.props.logger(`Attack "${attack.name}" failed execution instruction validation.`)
         return
       }
-      this.props.logger('Attack instructions are valid...')
+      // this.props.logger('Attack instructions are valid...')
 
 
       let inputs = {}
