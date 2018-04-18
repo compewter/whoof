@@ -59,7 +59,7 @@ class Attacks extends Component {
         this._socket.emit('attackUser', {
           userSocket: socketId,
           attack: attackExecute.toString(),
-          params: Object.assign({}, params, {id: attackInstanceId})
+          params: Object.assign(params, {id: attackInstanceId})
         })
       })
     }catch(e){

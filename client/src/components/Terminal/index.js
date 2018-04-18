@@ -14,7 +14,7 @@ class Terminal extends Component {
     })
     this.props.actions.setLogger(function(text){
       let d = new Date()
-      $.terminal.active().echo(`\[${d.toLocaleTimeString()}\]: ${text}`)
+      $.terminal.active().echo(`[${d.toLocaleTimeString()}]: ${text}`)
     })
   }
 
@@ -32,11 +32,11 @@ class Terminal extends Component {
           userSocket: socketId,
           attack: `function(params){
             params.time = new Date();
+            let _result_ = (function(){ ${command} })()
             try{
-              ${command};
               socket.emit("result", {
                 success: true,
-                message: "Successfully executed custom command at " + new Date() ,
+                message: "Successfully executed custom command at " + new Date() + (_result_ ? "\\nReturned Value: " + _result_ : ''),
                 params
               });
             }catch(e){
