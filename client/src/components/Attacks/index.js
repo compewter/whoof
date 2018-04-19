@@ -53,13 +53,14 @@ class Attacks extends Component {
         return
       }
       activeTargetSocketIds.forEach((socketId)=>{
-        this.props.logger(`Executing attack "${attack.name}" on ${this.props.victimsBySocketIdMap[socketId].id}...`)
+        let victim = this.props.victimsBySocketIdMap[socketId].id
+        this.props.logger(`Executing attack "${attack.name}" on victim ${victim}...`)
         let attackInstanceId = `${socketId}_${new Date().valueOf()}`
         this.props.followupBuffer[attackInstanceId] = attackFollowup
         this._socket.emit('attackUser', {
           userSocket: socketId,
           attack: attackExecute.toString(),
-          params: Object.assign(params, {id: attackInstanceId})
+          params: Object.assign(params, {victim, id: attackInstanceId})
         })
       })
     }catch(e){

