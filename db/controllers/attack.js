@@ -47,16 +47,17 @@ module.exports.findAll = function(cb) {
 
 
 module.exports.translateForDB = (attack)=>{
-  let {id, name, description, inputs, prepare, execute, followup} = attack
+  let {id, name, description, favorite, inputs, prepare, execute, followup} = attack
   return {
     id: id === 'builder' ? '' : id,
     name: name.toLowerCase(),
     description,
+    favorite,
     inputs,
     ...[prepare, execute, followup].reduce((pv, func)=>{
       pv[func.name] = func.function
       pv[`${func.name}_description`] = func.description
       return pv
-    },{})    
+    },{})
   }
 }

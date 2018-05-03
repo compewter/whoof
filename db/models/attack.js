@@ -2,15 +2,20 @@ const Sequelize = require('sequelize');
 const sequelize = require('../')
 
 const Attack = sequelize.define('Attack', {
-  id: { 
-    type: Sequelize.INTEGER, 
+  id: {
+    type: Sequelize.INTEGER,
     autoIncrement: true,
     primaryKey: true
   },
 
-  name: { 
-    type: Sequelize.STRING, 
+  name: {
+    type: Sequelize.STRING,
     unique: true,
+    allowNull: false
+  },
+
+  favorite: {
+    type: Sequelize.INTEGER,
     allowNull: false
   },
 

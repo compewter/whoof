@@ -15,7 +15,7 @@ class Attacks extends Component {
 
     this._socket.on('attacks', this._attacksReceived)
     this._socket.on('result', this._resultReceived)
-    
+
     this._socket.emit('getAttacks')
   }
 
@@ -45,7 +45,7 @@ class Attacks extends Component {
 
       let inputs = {}
       Object.keys(attack.inputs).forEach((name)=>{
-        inputs[name] = attack.inputs[name].value        
+        inputs[name] = attack.inputs[name].value
       })
       let params = attackPrep(inputs, this.props.logger)
       if(params._cancel_attack){
@@ -67,6 +67,10 @@ class Attacks extends Component {
       this.props.logger('Error executing attack.')
       this.props.logger(e)
     }
+  }
+
+  _favoriteAttack = (attack)=>{
+    this._socket.emit('saveAttack', Object.assign({},attack,{favorite: attack.favorite === 0 ? 1 : 0}))
   }
 
   _saveAttack = (attack)=>{
@@ -107,7 +111,7 @@ class Attacks extends Component {
             attacks.map((attack, idx) => {
               if(activeAttack.id === attack.id && activeAttack.editing){
                 return (
-                  <AttackBuilder 
+                  <AttackBuilder
                     active={activeAttack.id === attack.id}
                     attack={attack.pending}
                     delete={this._deleteAttack}
@@ -126,6 +130,7 @@ class Attacks extends Component {
                   active={activeAttack.id === attack.id}
                   activeAttack={activeAttack}
                   defaultAttack={attack}
+                  favoriteAttack={this._favoriteAttack}
                   execute={this._executeAttack}
                   index={idx}
                   key={`attack_${idx}`}
@@ -135,7 +140,7 @@ class Attacks extends Component {
                 />)
             })
           }
-          <AttackBuilder 
+          <AttackBuilder
             active={activeAttack.id === 'builder'}
             attack={exampleAttack.pending}
             delete={()=>{}}

@@ -1,5 +1,13 @@
 import * as types from './types';
 
+export const favoriteAttack = (attack) => {
+  return {
+    type: types.TOGGLE_FAVORITE,
+    attack
+  };
+}
+
+
 export const setAttacks = (attacks) => {
   return {
     type: types.SET_ATTACKS,

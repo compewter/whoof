@@ -1,8 +1,9 @@
 import React, {Component, PropTypes} from 'react'
+import { Icon } from 'semantic-ui-react'
 
 class Attack extends Component {
   render(){
-    let { active, activeAttack, defaultAttack, execute, index, toggleActive, toggleEdit, updateInput } = this.props
+    let { active, activeAttack, defaultAttack, execute, favoriteAttack, index, toggleActive, toggleEdit, updateInput } = this.props
     return(
       <div className='ui segment'>
         <div
@@ -12,8 +13,11 @@ class Attack extends Component {
           <div className='four wide column'>
             <h4 className="capitalize">{defaultAttack.name}</h4>
           </div>
-          <div className='twelve wide column'>
+          <div className='eleven wide column'>
             <span>{defaultAttack.description}</span>
+          </div>
+          <div className='one wide column' onClick={() =>{toggleActive(defaultAttack); favoriteAttack(defaultAttack);}}>
+            <Icon name={`star${defaultAttack.favorite ? '' : ' outline'}`} />
           </div>
         </div>
 
@@ -63,8 +67,9 @@ class Attack extends Component {
 Attack.propTypes = {
   index: PropTypes.number.isRequired,
   active: PropTypes.bool.isRequired,
-  defaultAttack: PropTypes.object.isRequired,
   activeAttack: PropTypes.object,
+  defaultAttack: PropTypes.object.isRequired,
+  favoriteAttack: PropTypes.func.isRequired,
   toggleActive: PropTypes.func.isRequired,
   toggleEdit: PropTypes.func.isRequired,
   updateInput: PropTypes.func.isRequired,

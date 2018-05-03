@@ -79,11 +79,12 @@ function assembleAttacks(attacks){
       return pv
     },{})
     //attack is a sequelize instance so we need to deconstruct the values from it
-    let {id, name, description, inputs, created_at, updated_at} = attack
+    let {id, name, description, favorite, inputs, created_at, updated_at} = attack
     return {
       id,
       name,
       description,
+      favorite,
       inputs: JSON.parse(inputs),
       created_at,
       updated_at,
