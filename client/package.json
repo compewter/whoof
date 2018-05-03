@@ -54,7 +54,9 @@
     "react-ace": "^4.1.5",
     "react-dom": "^15.4.0",
     "react-redux": "^5.0.2",
-    "redux": "^3.6.0"
+    "redux": "^3.6.0",
+    "semantic-ui-css": "^2.3.1",
+    "semantic-ui-react": "^0.80.0"
   },
   "scripts": {
     "start": "node scripts/start.js",
