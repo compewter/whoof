@@ -1,11 +1,14 @@
-import React, {Component, PropTypes} from 'react'
+import React, {Component} from 'react'
+import PropTypes from 'prop-types'
 import {connect} from 'react-redux'
 import {bindActionCreators} from 'redux'
 import * as attackActions from '../../actions/attacks'
+import { Divider } from 'semantic-ui-react'
 import * as utils from '../../utils'
 import './Attacks.css'
 import Attack from './Attack'
 import AttackBuilder from './AttackBuilder'
+import AttackSearch from './AttackSearch'
 
 
 class Attacks extends Component {
@@ -102,13 +105,15 @@ class Attacks extends Component {
   }
 
   render(){
-    let {attacks, activeAttack, exampleAttack, actions, logger} = this.props
+    let {attacks, activeAttack, exampleAttack, actions, logger, visibleAttacks} = this.props
     return (
       <div className='block'>
-        <h3 className='ui dividing header'>Attacks</h3>
+        <h3 className="section-header">Attacks</h3>
+        <AttackSearch attacks={attacks} showAttack={actions.showAttack} toggleActive={actions.toggleActiveAttack} />
+        <Divider />
         <div className='ui accordion segments'>
           {
-            attacks.map((attack, idx) => {
+            attacks.filter(attack => visibleAttacks[attack.id] || !!attack.favorite).map((attack, idx) => {
               if(activeAttack.id === attack.id && activeAttack.editing){
                 return (
                   <AttackBuilder
@@ -160,6 +165,7 @@ class Attacks extends Component {
 Attacks.propTypes = {
   attacks: PropTypes.array.isRequired,
   activeAttack: PropTypes.object.isRequired,
+  visibleAttacks: PropTypes.object.isRequired,
   activeTargets: PropTypes.object.isRequired,
   followupBuffer: PropTypes.object.isRequired,
   logger: PropTypes.func.isRequired,
@@ -170,6 +176,7 @@ Attacks.propTypes = {
 function mapStateToProps(state, props) {
   return {
     attacks: state.attacks.attacks,
+    visibleAttacks: state.attacks.visibleAttacks,
     activeAttack: state.attacks.activeAttack,
     activeTargets: state.victims.activeTargets,
     exampleAttack: state.attacks.exampleAttack,

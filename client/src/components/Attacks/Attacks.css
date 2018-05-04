@@ -7,3 +7,8 @@ input:invalid{
 .capitalize{
   text-transform: capitalize;
 }
+
+.section-header{
+  float: left;
+  margin: 7px 15px 0px 0px !important;
+}

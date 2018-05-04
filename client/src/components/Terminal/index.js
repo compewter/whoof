@@ -1,17 +1,22 @@
-import React, {Component, PropTypes} from 'react'
+import React, {Component} from 'react'
+import PropTypes from 'prop-types'
 import {connect} from 'react-redux'
 import {bindActionCreators} from 'redux'
+import $ from 'jquery'
+import 'jquery.terminal'
+import 'jquery.terminal/css/jquery.terminal.min.css'
 import * as terminalActions from '../../actions/terminal'
 import * as utils from '../../utils'
 
 class Terminal extends Component {
   componentDidMount() {
-    $('#terminal').terminal(this._commandHandler.bind(this), {
+    let term = $('#terminal').terminal(this._commandHandler.bind(this), {
       greetings: 'Actions are logged here.\nAdditionally, you can use this terminal to execute commands on selected targets.',
-      name: 'js_demo',
       height: 300,
       prompt: '[WHooF]:~$ '
     })
+    term.hover(term.focus)
+    term.focusout(()=>{ term.focus(false) })
     this.props.actions.setLogger(function(text){
       let d = new Date()
       $.terminal.active().echo(`[${d.toLocaleTimeString()}]: ${text}`)

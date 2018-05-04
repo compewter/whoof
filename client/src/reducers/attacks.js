@@ -2,6 +2,12 @@ import * as types from '../actions/types'
 
 export default (state = {}, action) => {
   switch (action.type) {
+    case types.SHOW_ATTACK:
+      return Object.assign({}, state, {
+        visibleAttacks: Object.assign({}, state.visibleAttacks, {
+          [action.attackId]: true
+        })
+      })
     case types.SET_ATTACKS:
       return Object.assign({}, state, {
         attacks: action.attacks.map((attack)=>{

@@ -1,4 +1,5 @@
-import React, {Component, PropTypes} from 'react'
+import React, {Component} from 'react'
+import PropTypes from 'prop-types'
 
 class AttackInputs extends Component {
   render(){
@@ -24,7 +25,7 @@ class AttackInputs extends Component {
           ))}
         </div>
         <div className="ui two wide column middle aligned">
-          <button 
+          <button
             className="compact circular ui icon button"
             onClick={()=>{del(input.name)}}
           >

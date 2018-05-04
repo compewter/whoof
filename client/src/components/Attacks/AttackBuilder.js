@@ -1,4 +1,5 @@
-import React, {Component, PropTypes} from 'react'
+import React, {Component} from 'react'
+import PropTypes from 'prop-types'
 import AceEditor from 'react-ace'
 import AttackInputs from './AttackInputs'
 import 'brace/mode/java';

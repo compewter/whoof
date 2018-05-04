@@ -7,6 +7,12 @@ export const favoriteAttack = (attack) => {
   };
 }
 
+export const showAttack = (attackId) => {
+  return {
+    type: types.SHOW_ATTACK,
+    attackId
+  };
+}
 
 export const setAttacks = (attacks) => {
   return {

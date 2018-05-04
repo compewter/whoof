@@ -6,6 +6,7 @@ export default {
   },
   attacks: {
     attacks: [],
+    visibleAttacks: {},
     activeAttack: {
       id: null
     },

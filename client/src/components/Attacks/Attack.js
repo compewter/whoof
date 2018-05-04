@@ -1,9 +1,11 @@
-import React, {Component, PropTypes} from 'react'
+import React, {Component} from 'react'
+import PropTypes from 'prop-types'
 import { Icon } from 'semantic-ui-react'
 
 class Attack extends Component {
   render(){
     let { active, activeAttack, defaultAttack, execute, favoriteAttack, index, toggleActive, toggleEdit, updateInput } = this.props
+    console.log(Object.values(defaultAttack.inputs))
     return(
       <div className='ui segment'>
         <div
@@ -30,6 +32,7 @@ class Attack extends Component {
                   className='ui input'
                   type={input.type || 'text'}
                   onChange={(event)=>{
+                    console.log('called')
                     updateInput({
                       attackId: defaultAttack.id,
                       name: input.name,
@@ -37,7 +40,7 @@ class Attack extends Component {
                       valid: event.target.checkValidity()
                     })
                   }}
-                  defaultValue={input.value}
+                  defaultValue={input.defaultValue || ''}
                   style={{width:"90%"}}
                 />
               </div>
