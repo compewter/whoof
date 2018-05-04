@@ -10,7 +10,7 @@ class Terminal extends Component {
       greetings: 'Actions are logged here.\nAdditionally, you can use this terminal to execute commands on selected targets.',
       name: 'js_demo',
       height: 300,
-      prompt: '[VeAL ~]$ '
+      prompt: '[WHooF]:~$ '
     })
     this.props.actions.setLogger(function(text){
       let d = new Date()
