@@ -1,7 +1,7 @@
-# WHooF (Web Hooking Framework)
-WHooF is a web application security tool to manage, execute and assess web browser vulnerabilities.
+# whoof (Web Hooking Framework)
+whoof is a web application security tool to manage, execute and assess web browser vulnerabilities.
 
-WHooF uses Node/Express server-side, with React/Redux on the client-side.
+whoof uses Node/Express server-side, with React/Redux on the client-side.
 
 Hooked browsers are managed via WebSockets.
 

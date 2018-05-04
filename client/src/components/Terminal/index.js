@@ -13,7 +13,7 @@ class Terminal extends Component {
     let term = $('#terminal').terminal(this._commandHandler.bind(this), {
       greetings: 'Actions are logged here.\nAdditionally, you can use this terminal to execute commands on selected targets.',
       height: 300,
-      prompt: '[WHooF]:~$ '
+      prompt: '[whoof]:~$ '
     })
     term.hover(term.focus)
     term.focusout(()=>{ term.focus(false) })
