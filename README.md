@@ -5,7 +5,7 @@ whoof uses Node/Express server-side, with React/Redux on the client-side.
 
 Hooked browsers are managed via WebSockets.
 
-![screenshot](https://user-images.githubusercontent.com/9021719/39608608-8aed74f6-4ef7-11e8-9e71-950f7acaf716.jpg)
+![screenshot](https://user-images.githubusercontent.com/9021719/39668320-729192be-507f-11e8-8cc5-0f19f08f2383.jpg)
 
 ### Installation:
 ```sh
