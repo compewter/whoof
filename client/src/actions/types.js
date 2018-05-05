@@ -1,6 +1,8 @@
 export const ADD_VICTIM = 'ADD_VICTIM'
 export const REMOVE_VICTIM = 'REMOVE_VICTIM'
 export const TARGET_VICTIM = 'TARGET_VICTIM'
+export const UPDATE_VICTIM = 'UPDATE_VICTIM'
+export const TARGET_PAGE = 'TARGET_PAGE'
 
 export const SET_ATTACKS = 'SET_ATTACKS'
 export const SHOW_ATTACK = 'SHOW_ATTACK'

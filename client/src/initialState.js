@@ -1,8 +1,8 @@
 export default {
   victims: {
     activeTargets: {},
-    victims: [],
-    victimsBySocketIdMap: {}
+    victims: {},
+    victimIdBySocketIdMap: {}
   },
   attacks: {
     attacks: [],

@@ -14,9 +14,23 @@ export const removeVictim = (victim) => {
   }
 }
 
-export const targetVictim = (victim) => {
+export const targetVictim = (victimId) => {
   return {
     type: types.TARGET_VICTIM,
+    victimId
+  }
+}
+
+export const targetPage = (socketId) => {
+  return {
+    type: types.TARGET_PAGE,
+    socketId
+  }
+}
+
+export const updateVictim = (victim) => {
+  return {
+    type: types.UPDATE_VICTIM,
     victim
   }
 }

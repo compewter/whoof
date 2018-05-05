@@ -4,7 +4,6 @@ import {connect} from 'react-redux'
 import {bindActionCreators} from 'redux'
 import * as attackActions from '../../actions/attacks'
 import { Divider } from 'semantic-ui-react'
-import * as utils from '../../utils'
 import './Attacks.css'
 import Attack from './Attack'
 import AttackBuilder from './AttackBuilder'
@@ -29,7 +28,15 @@ class Attacks extends Component {
 
   _executeAttack = (attack)=>{
     try{
-      let activeTargetSocketIds = utils.objToArrayOfValues(this.props.activeTargets, 'socketId')
+      let activeTargetSocketIds = Object.keys(this.props.activeTargets).reduce((socketIds, targetId)=>{
+        let target = this.props.victims[targetId]
+        Object.values(target.activePagesBySocketId).forEach((page)=>{
+          if(page.targeted){
+            socketIds.push(page.socketId)
+          }
+        })
+        return socketIds
+      },[])
       if(activeTargetSocketIds.length === 0){
         this.props.logger(`No active targets. Select a target.`)
         return
@@ -56,12 +63,12 @@ class Attacks extends Component {
         return
       }
       activeTargetSocketIds.forEach((socketId)=>{
-        let victim = this.props.victimsBySocketIdMap[socketId].id
+        let victim = this.props.victimIdBySocketIdMap[socketId]
         this.props.logger(`Executing attack "${attack.name}" on victim ${victim}...`)
         let attackInstanceId = `${socketId}_${new Date().valueOf()}`
         this.props.followupBuffer[attackInstanceId] = attackFollowup
-        this._socket.emit('attackUser', {
-          userSocket: socketId,
+        this._socket.emit('attackVictim', {
+          victimSocket: socketId,
           attack: attackExecute.toString(),
           params: Object.assign(params, {victim, id: attackInstanceId})
         })
@@ -99,7 +106,7 @@ class Attacks extends Component {
 
   _resultReceived = (result)=>{
     let resultId = result.params.id
-    this.props.logger(`Result received from victim ${this.props.victimsBySocketIdMap[resultId.slice(0, resultId.lastIndexOf('_'))].id}`)
+    this.props.logger(`Result received from victim ${this.props.victimIdBySocketIdMap[resultId.slice(0, resultId.lastIndexOf('_'))]}`)
     this.props.logger(`${result.message}`)
     this.props.followupBuffer[resultId](result.params, this.props.logger)
   }
@@ -170,7 +177,8 @@ Attacks.propTypes = {
   followupBuffer: PropTypes.object.isRequired,
   logger: PropTypes.func.isRequired,
   socket: PropTypes.object.isRequired,
-  victimsBySocketIdMap: PropTypes.object
+  victims: PropTypes.object,
+  victimIdBySocketIdMap: PropTypes.object
 }
 
 function mapStateToProps(state, props) {
@@ -179,10 +187,11 @@ function mapStateToProps(state, props) {
     visibleAttacks: state.attacks.visibleAttacks,
     activeAttack: state.attacks.activeAttack,
     activeTargets: state.victims.activeTargets,
+    victims: state.victims.victims,
     exampleAttack: state.attacks.exampleAttack,
     followupBuffer: state.attacks.followupBuffer,
     logger: state.terminal.logger,
-    victimsBySocketIdMap: state.victims.victimsBySocketIdMap
+    victimIdBySocketIdMap: state.victims.victimIdBySocketIdMap
   }
 }
 

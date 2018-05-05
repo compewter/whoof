@@ -5,7 +5,6 @@ import { Icon } from 'semantic-ui-react'
 class Attack extends Component {
   render(){
     let { active, activeAttack, defaultAttack, execute, favoriteAttack, index, toggleActive, toggleEdit, updateInput } = this.props
-    console.log(Object.values(defaultAttack.inputs))
     return(
       <div className='ui segment'>
         <div
@@ -32,7 +31,6 @@ class Attack extends Component {
                   className='ui input'
                   type={input.type || 'text'}
                   onChange={(event)=>{
-                    console.log('called')
                     updateInput({
                       attackId: defaultAttack.id,
                       name: input.name,

