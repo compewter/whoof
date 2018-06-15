@@ -24,10 +24,10 @@
     "sqlite3": "^3.1.8"
   },
   "scripts": {
-    "start": "concurrently \"nodemon --exec npm run server --ignore client/\" \"npm run client\"",
+    "start": "concurrently \"npm run server --ignore client/\" \"npm run client\"",
     "server": "babel-node server.js",
     "client": "babel-node start-client.js",
-    "dev": "echo \"This command has been deprecated. Use 'npm start'\" && exit 1"
+    "dev": "concurrently \"nodemon --exec npm run server --ignore client/\" \"npm run client\""
   },
   "devDependencies": {
     "babel-eslint": "^6.1.2",
