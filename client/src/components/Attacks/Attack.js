@@ -1,10 +1,10 @@
 import React, {Component} from 'react'
 import PropTypes from 'prop-types'
-import { Icon } from 'semantic-ui-react'
+import { Button, Icon, Popup } from 'semantic-ui-react'
 
 class Attack extends Component {
   render(){
-    let { active, activeAttack, defaultAttack, execute, favoriteAttack, index, toggleActive, toggleEdit, updateInput } = this.props
+    let { active, activeAttack, defaultAttack, execute, exportAttack, favoriteAttack, index, toggleActive, toggleEdit, updateInput } = this.props
     return(
       <div className='ui segment'>
         <div
@@ -49,15 +49,25 @@ class Attack extends Component {
           ))}
 
           <div className='ui secondary segment'>
-            <button
-              className="ui icon grey button"
-              disabled={activeAttack.inputs && Object.values(activeAttack.inputs).some((input)=>{return !input.valid})}
-              onClick={()=>{execute(activeAttack)}}
-            ><i className="bomb icon"></i></button>
-            <button
-              className="ui icon grey button"
-              onClick={()=>{toggleEdit(activeAttack)}}
-            ><i className="edit icon"></i></button>
+            <Popup trigger={<Button
+                disabled={activeAttack.inputs && Object.values(activeAttack.inputs).some((input)=>{return !input.valid})}
+                onClick={()=>{execute(activeAttack)}}
+                icon="bomb"
+              ></Button>}
+              content="Execute Attack"
+            />
+            <Popup trigger={<Button
+                onClick={()=>{toggleEdit(activeAttack)}}
+                icon="edit"
+              ></Button>}
+              content="Edit Attack"
+            />
+            <Popup trigger={<Button
+                onClick={()=>{exportAttack(activeAttack)}}
+                icon="download"
+              ></Button>}
+              content="Export Attack"
+            />
           </div>
         </div>
       </div>

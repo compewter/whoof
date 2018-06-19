@@ -7,6 +7,7 @@ import { Divider } from 'semantic-ui-react'
 import './Attacks.css'
 import Attack from './Attack'
 import AttackBuilder from './AttackBuilder'
+import AttackImport from './AttackImport'
 import AttackSearch from './AttackSearch'
 
 
@@ -79,6 +80,18 @@ class Attacks extends Component {
     }
   }
 
+  _exportAttack = (attack)=>{
+    let {name, description, inputs, prepare, execute, followup} = attack
+    const blob = new Blob([JSON.stringify({id: 'new', name, description, inputs, prepare, execute, followup, favorite: '0'})], {type: 'text/json'})
+    const a = window.document.createElement('a')
+    a.href = window.URL.createObjectURL(blob)
+    a.download = name.replace(' ','_')+'_whoof_export.json'        
+    document.body.appendChild(a)
+    a.click()        
+    document.body.removeChild(a)
+    window.URL.revokeObjectURL(a.href)
+  }
+
   _favoriteAttack = (attack)=>{
     this._socket.emit('saveAttack', Object.assign({},attack,{favorite: attack.favorite === 0 ? 1 : 0}))
   }
@@ -117,6 +130,7 @@ class Attacks extends Component {
       <div className='block'>
         <h3 className="section-header">Attacks</h3>
         <AttackSearch attacks={attacks} showAttack={actions.showAttack} toggleActive={actions.toggleActiveAttack} />
+        <AttackImport logger={logger} save={this._saveAttack} />
         <Divider />
         <div className='ui accordion segments'>
           {
@@ -144,6 +158,7 @@ class Attacks extends Component {
                   defaultAttack={attack}
                   favoriteAttack={this._favoriteAttack}
                   execute={this._executeAttack}
+                  exportAttack={this._exportAttack}
                   index={idx}
                   key={`attack_${idx}`}
                   toggleActive={actions.toggleActiveAttack}
@@ -153,7 +168,7 @@ class Attacks extends Component {
             })
           }
           <AttackBuilder
-            active={activeAttack.id === 'builder'}
+            active={activeAttack.id === 'new'}
             attack={exampleAttack.pending}
             delete={()=>{}}
             execute={this._executeAttack}

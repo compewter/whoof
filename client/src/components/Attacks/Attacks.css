@@ -12,3 +12,9 @@ input:invalid{
   float: left;
   margin: 7px 15px 0px 0px !important;
 }
+
+.attack-import {
+  display: inline;
+  cursor: pointer;
+  margin-left: 15px;
+}

@@ -26,7 +26,7 @@ export default (state = {}, action) => {
         })
       })
     case types.SET_PENDING_ATTACK_EDITS:
-      if(action.attack.id === 'builder'){
+      if(action.attack.id === 'new'){
         return Object.assign({}, state, {
           exampleAttack: Object.assign({}, state.exampleAttack, {
             pending: action.attack

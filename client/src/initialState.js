@@ -11,7 +11,7 @@ export default {
       id: null
     },
     exampleAttack: {
-      id: 'builder',
+      id: 'new',
       name: 'Attack Builder',
       description: 'Template for building a new attack.',
       'inputs': {

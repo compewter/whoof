@@ -4,6 +4,8 @@ import AceEditor from 'react-ace'
 import AttackInputs from './AttackInputs'
 import 'brace/mode/java';
 import 'brace/theme/monokai';
+import { Button, Popup } from 'semantic-ui-react'
+
 
 class AttackBuilder extends Component {
   _execute = ()=>{
@@ -68,14 +70,14 @@ class AttackBuilder extends Component {
     return(
       <div className="ui segment">
         <div
-          onClick={() => {toggleActive({id: 'builder'})}}
+          onClick={() => {toggleActive({id: 'new'})}}
           className={`ui grid title ${active ? 'active' : ''}`}
         >
           <div className='four wide column'>
-            <h4 className='capitalize'>{attack.id === 'builder' ? 'Attack Builder' : attack.name}</h4>
+            <h4 className='capitalize'>{attack.id === 'new' ? 'Attack Builder' : attack.name}</h4>
           </div>
           <div className='twelve wide column'>
-            <span>{attack.id === 'builder' ? 'Template for building a new attack.' : attack.description}</span>
+            <span>{attack.id === 'new' ? 'Template for building a new attack.' : attack.description}</span>
           </div>
         </div>
 
@@ -179,21 +181,26 @@ class AttackBuilder extends Component {
 
           <div className={active ? 'content active' : 'content'}>
             <div colSpan="2">
-              <button
-                className="ui icon button"
-                onClick={this._execute}
-              ><i className="bomb icon"></i></button>
-              <button
-                className="ui icon button"
-                onClick={this._save}
-              ><i className="save icon"></i></button>
+              <Popup trigger={<Button
+                  onClick={this._execute}
+                  icon="bomb"
+                ></Button>}
+                content="Execute Attack"
+              />
+              <Popup trigger={<Button
+                  onClick={this._save}
+                  icon="save"
+                ></Button>}
+                content="Save Attack"
+              />
               {
-                attack.id !== 'builder' ?
-                <div
-                  className="ui icon button"
-                  data-tooltip="Delete this attack"
-                  onClick={this._delete}
-                ><i className="trash icon"></i></div>
+                attack.id !== 'new' ?
+                <Popup trigger={<Button
+                    onClick={this._delete}
+                    icon="trash"
+                  ></Button>}
+                  content="Delete Attack"
+                />
               :''}
             </div>
           </div>

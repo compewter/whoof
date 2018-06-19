@@ -49,10 +49,10 @@ module.exports.findAll = function(cb) {
 module.exports.translateForDB = (attack)=>{
   let {id, name, description, favorite, inputs, prepare, execute, followup} = attack
   return {
-    id: id === 'builder' ? '' : id,
+    id: id === 'new' ? '' : id,
     name: name.toLowerCase(),
     description,
-    favorite,
+    favorite: favorite || '0',
     inputs,
     ...[prepare, execute, followup].reduce((pv, func)=>{
       pv[func.name] = func.function

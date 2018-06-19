@@ -26,6 +26,7 @@ function saveAttack(attack){
     getAttacks()
   })
   .catch((err)=>{
+    module.exports.emit('message', 'Unable to save new attack. ' + err.errors[0].message)
     console.log(err)
   })
 }

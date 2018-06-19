@@ -72,6 +72,7 @@ class AttackSearch extends Component {
         onSearchChange={this._searchChange}
         results={results}
         value={value}
+        style={{display: 'inline-block'}}
       />
     )
   }
