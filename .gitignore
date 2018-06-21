@@ -2,3 +2,4 @@ node_modules
 npm-debug.log
 notes
 db/db.sqlite3
+.env
