@@ -2,7 +2,6 @@
   "name": "whoof",
   "version": "0.1.0",
   "private": true,
-  "proxy": "http://localhost:1337/",
   "devDependencies": {
     "enzyme": "^2.4.1",
     "react-addons-test-utils": "^15.4.0",

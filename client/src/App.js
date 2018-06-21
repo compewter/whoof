@@ -7,7 +7,7 @@ import Terminal from './components/Terminal';
 
 class App extends Component {
   componentWillMount(){
-    this._socket = io()
+    this._socket = io(`http://${process.env.REACT_APP_ADMIN_APP_IP}:${process.env.REACT_APP_ADMIN_SOCKET_PORT}`)
     Notification.requestPermission()
       .then((permission)=>{
         if(permission === 'granted'){

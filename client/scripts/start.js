@@ -32,7 +32,7 @@ if (!checkRequiredFiles([paths.appHtml, paths.appIndexJs])) {
 }
 
 // Tools like Cloud9 rely on this.
-var DEFAULT_PORT = process.env.PORT || 3000;
+var DEFAULT_PORT = process.env.REACT_APP_ADMIN_APP_PORT;
 var compiler;
 var handleCompile;
 
@@ -283,7 +283,7 @@ function runDevServer(host, port, protocol) {
 
 function run(port) {
   var protocol = process.env.HTTPS === 'true' ? "https" : "http";
-  var host = process.env.HOST || 'localhost';
+  var host = process.env.REACT_APP_ADMIN_APP_IP;
   setupCompiler(host, port, protocol);
   runDevServer(host, port, protocol);
 }
