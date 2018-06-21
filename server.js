@@ -1,3 +1,4 @@
+require('./.env')
 const http          = require('http'),
       socketio      = require('socket.io'),
       express       = require('express'),
@@ -19,15 +20,15 @@ const victimApp     = express(),
 ioVictim.use(victimIoSession(victimSession))
 require('./routes/victim/sockets').configure(ioVictim)
 
-process.env.VICTIM_PORT = process.env.VICTIM_PORT || 8080
+process.env.VICTIM_SOCKET_PORT = process.env.VICTIM_SOCKET_PORT
 victimApp.use(victimSession)
 victimApp.use(function(req, res, next) {
   res.setHeader("Access-Control-Allow-Origin", "*");
   return next();
 })
 victimApp.use(express.static(__dirname + '/public'))
-victimServer.listen( process.env.VICTIM_PORT)
-console.log(`Victim socket server listening on :${process.env.VICTIM_PORT}`)
+victimServer.listen( process.env.VICTIM_SOCKET_PORT)
+console.log(`Victim socket server listening on :${process.env.VICTIM_SOCKET_PORT}`)
 
 
 
@@ -40,11 +41,9 @@ const adminApp = express(),
 
 require('./routes/admin/sockets').configure(ioAdmin)
 
-// adminApp.use( express.static(__dirname + '/../client/public') )
-process.env.ADMIN_PORT = process.env.ADMIN_PORT || 1337
-adminServer.listen( process.env.ADMIN_PORT )
-console.log(`Admin socket server listening on :${process.env.ADMIN_PORT}`)
-
+process.env.ADMIN_SOCKET_PORT = process.env.ADMIN_SOCKET_PORT
+adminServer.listen( process.env.ADMIN_SOCKET_PORT )
+console.log(`Admin socket server listening on :${process.env.ADMIN_SOCKET_PORT}`)
 
 
 
