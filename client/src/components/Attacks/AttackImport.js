@@ -30,7 +30,6 @@ class AttackImport extends Component {
   }
 
   render(){
-    let {input, inputFields, update, del} = this.props
     return (
       <div className="attack-import">
         <Popup trigger={<Icon name="upload" id="attack-import" size="large" onClick={this._openFileDialog}/>} content="Import Attack" />

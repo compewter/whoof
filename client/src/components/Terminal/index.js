@@ -6,7 +6,6 @@ import $ from 'jquery'
 import 'jquery.terminal'
 import 'jquery.terminal/css/jquery.terminal.min.css'
 import * as terminalActions from '../../actions/terminal'
-import * as utils from '../../utils'
 
 class Terminal extends Component {
   componentDidMount() {
