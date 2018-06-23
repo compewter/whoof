@@ -3,21 +3,20 @@ const server = require('../../server')
 const Attack = require('../../db/controllers/attack')
 
 module.exports.configure = function (io) {
+  module.exports.emit = function (eventName, data) {
+    io.to('admins').emit(eventName, data)
+  }
+
   io.on('connection', function (socket) {
-    console.log('admin connected')
-
-    module.exports.emit = function (eventName, data) {
-      io.to('admins').emit(eventName, data)
+    console.log('new connection on admin interface', socket.handshake.session)
+    if(process.env.PASSWD === '' || socket.handshake.session.authorized){
+      login(socket)
+    }else{
+      socket.on('login', function(password){
+        testLogin(password, socket)
+      })
+      socket.emit('login-required')
     }
-
-    socket.join('admins')
-
-    socket.on('attackVictim', attackVictim)
-    socket.on('disconnect', disconnect)
-    socket.on('getAttacks', getAttacks)
-    socket.on('getUsers', getUsers)
-    socket.on('saveAttack', saveAttack)
-    socket.on('deleteAttack', deleteAttack)
   })
 }
 
@@ -38,6 +37,28 @@ function deleteAttack(attackId){
   .catch((err)=>{
     console.log(err)
   })
+}
+
+function login(socket){
+  socket.join('admins')
+
+  socket.on('attackVictim', attackVictim)
+  socket.on('disconnect', disconnect)
+  socket.on('getAttacks', getAttacks)
+  socket.on('getUsers', getUsers)
+  socket.on('saveAttack', saveAttack)
+  socket.on('deleteAttack', deleteAttack)
+  socket.emit('authorized', true)
+}
+
+function testLogin(password, socket){
+  if(password === process.env.ADMIN_APP_PASSWD){
+    socket.handshake.session.authorized = true
+    socket.handshake.session.save()
+    login(socket)
+  }else{
+    socket.emit('login-required')
+  }
 }
 
 function getUsers() {

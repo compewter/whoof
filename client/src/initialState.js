@@ -56,5 +56,8 @@ export default {
   },
   terminal: {
     logger: console.log
+  },
+  login: {
+    authorized: false
   }
 }
