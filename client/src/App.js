@@ -14,7 +14,8 @@ class App extends Component {
     const {actions} = this.props
     this._socket = io(`http://${process.env.REACT_APP_ADMIN_APP_IP}:${process.env.REACT_APP_ADMIN_SOCKET_PORT}`)
 
-    this._socket.on('authorized', function(){
+    this._socket.on('authorized', function(sessID){
+      document.cookie = `admin-sess=${sessID}`
       actions.setAuthorized(true)
     })
 

