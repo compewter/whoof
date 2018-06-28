@@ -71,7 +71,7 @@ class Attacks extends Component {
         this._socket.emit('attackVictim', {
           victimSocket: socketId,
           attack: attackExecute.toString(),
-          params: Object.assign(params, {victim, id: attackInstanceId})
+          params: Object.assign(params, {victim, _attack_instance_id: attackInstanceId})
         })
       })
     }catch(e){
@@ -118,7 +118,7 @@ class Attacks extends Component {
   }
 
   _resultReceived = (result)=>{
-    let resultId = result.params.id
+    let resultId = result.params._attack_instance_id
     this.props.logger(`Result received from victim ${this.props.victimIdBySocketIdMap[resultId.slice(0, resultId.lastIndexOf('_'))]}`)
     this.props.logger(`${result.message}`)
     this.props.followupBuffer[resultId](result.params, this.props.logger)

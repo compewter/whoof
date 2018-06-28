@@ -24,7 +24,7 @@ export default {
       },
       'prepare': {
         name: 'prepare',
-        description: 'This function is used to programatically prepare any data for the execute function.\nAdd any data you need to the params object.\nUser inputs are automatically attached to the params argument.\nThe logger argument is provided for printing information.\nYou must return the params object.',
+        description: 'This function is used to programmatically prepare any data for the execute function.\nAdd any data you need to the params object.\nUser inputs are automatically attached to the params argument.\nThe logger argument is provided for printing information.\nYou must return the params object.',
         function: 'function prepare(params, logger){\n  //associate any necessary data to params\n  return params;\n}'
       },
       'execute': {

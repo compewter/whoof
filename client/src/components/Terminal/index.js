@@ -70,7 +70,7 @@ class Terminal extends Component {
               });
             }
           }`,
-          params: {victim: this.props.victimIdBySocketIdMap[socketId], id: attackInstanceId}
+          params: {victim: this.props.victimIdBySocketIdMap[socketId], _attack_instance_id: attackInstanceId}
         })
       })
     }

@@ -23,8 +23,8 @@ require('./routes/victim/sockets').configure(ioVictim)
 
 victimApp.use(victimSession)
 victimApp.use(function(req, res, next) {
-  res.setHeader("Access-Control-Allow-Origin", "*");
-  return next();
+  res.setHeader("Access-Control-Allow-Origin", "*")
+  return next()
 })
 victimApp.use(express.static(__dirname + '/public'))
 victimApp.get('/hook.js', function(req, res){
