@@ -29,7 +29,9 @@ module.exports.configure = function(io){
     })
 
     //when user disconnects, let admin know
-    socket.on('disconnect', disconnect)
+    socket.on('disconnect', function(){
+      disconnect(socket)
+    })
 
   })
 }
