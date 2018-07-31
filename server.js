@@ -33,7 +33,7 @@ victimApp.get('/hook.js', function(req, res){
   res.end()
 })
 victimServer.listen(process.env.VICTIM_SOCKET_PORT)
-console.log(`Victim socket server listening on :${process.env.VICTIM_SOCKET_PORT}`)
+console.log(`Victim socket server listening on ${process.env.VICTIM_SOCKET_IP}:${process.env.VICTIM_SOCKET_PORT}`)
 
 
 
@@ -45,7 +45,7 @@ const ioAdmin = socketio(process.env.ADMIN_SOCKET_PORT,{
 })
 
 require('./routes/admin/sockets').configure(ioAdmin)
-console.log(`Admin socket server listening on :${process.env.ADMIN_SOCKET_PORT}`)
+console.log(`Admin socket server listening on ${process.env.ADMIN_APP_IP}:${process.env.ADMIN_SOCKET_PORT}`)
 
 
 
