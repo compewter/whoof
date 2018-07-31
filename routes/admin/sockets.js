@@ -41,7 +41,7 @@ function assembleAttacks(attacks){
       name,
       description,
       favorite,
-      inputs: JSON.parse(inputs),
+      inputs: inputs,
       created_at,
       updated_at,
       ...assembledAttack
@@ -94,7 +94,7 @@ function getUsers() {
 
 function getAttacks() {
   Attack.findAll((attacks)=>{
-    module.exports.emit('attacks', assembleAttacks(attacks))
+    module.exports.emit('attacks', assembleAttacks(attacks.map(attack=>attack.dataValues)))
   })
 }
 

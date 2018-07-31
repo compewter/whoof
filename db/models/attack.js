@@ -56,7 +56,7 @@ const Attack = sequelize.define('Attack', {
 
   inputs: {
     type: Sequelize.JSON,
-    allowNull: true
+    allowNull: false
   }
 });
 

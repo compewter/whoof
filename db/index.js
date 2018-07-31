@@ -1,6 +1,6 @@
 const Sequelize = require('sequelize')
 
-const db = new Sequelize('veal', null, null, {
+const db = new Sequelize('whoof', null, null, {
   dialect: 'sqlite',
   storage: './db/db.sqlite3'
 })
