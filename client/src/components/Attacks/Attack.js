@@ -50,7 +50,7 @@ class Attack extends Component {
 
           <div className='ui secondary segment'>
             <Popup trigger={<Button
-                disabled={activeAttack.inputs && Object.values(activeAttack.inputs).some((input)=>{return !input.valid})}
+                disabled={activeAttack.inputs && Object.values(activeAttack.inputs).some((input)=>{if(input.value === input.defaultValue) {return false}; return !input.valid })}
                 onClick={()=>{execute(activeAttack)}}
                 icon="bomb"
               ></Button>}
